@@ -1,0 +1,21 @@
+# General
+.env
+*.log
+.DS_Store
+
+# Backend
+backend/target/
+backend/.env
+backend/src/main/resources/static/
+backend/src/main/resources/templates/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/package-lock.json
+
+# Contracts
+contracts/artifacts/
+contracts/cache/
+contracts/.env

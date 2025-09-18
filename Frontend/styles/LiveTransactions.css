@@ -1,0 +1,79 @@
+.live-transactions {
+  background: #1C2526;
+  border: 1px solid #2D3A3E;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.live-transactions h3 {
+  color: #D1D4DC;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.trade-table-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.trade-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #D1D4DC;
+  font-size: 12px;
+}
+
+.trade-table th,
+.trade-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #2D3A3E;
+}
+
+.trade-table th {
+  background: #2A2E39;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trade-table th:hover {
+  background: #3A3E49;
+}
+
+.trade-table td {
+  transition: background 0.2s;
+}
+
+.trade-table tr:hover {
+  background: #2D3A3E;
+}
+
+.recent-trade {
+  animation: highlight 2s ease-out;
+}
+
+@keyframes highlight {
+  0% { background: #26A69A; }
+  100% { background: transparent; }
+}
+
+.no-trades {
+  color: #888;
+  text-align: center;
+  padding: 10px;
+}
+
+.arrow {
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+a {
+  color: #4FC3F7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,450 @@
+.artist-details {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #1a1a2e, #2a2a3e);
+  color: #fff;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.card {
+  background: #2d3a3e;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 100%;
+}
+
+.card-header {
+  background: #1c2526;
+  color: #fff;
+  border-bottom: 1px solid #3e4b50;
+}
+
+.card-body {
+  padding: 0px;
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.zoom-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.zoom-controls .btn-outline-primary {
+  background: #2d3a3e;
+  color: #26a69a;
+  border-color: #26a69a;
+}
+
+.zoom-controls .btn-outline-primary:hover {
+  background: #26a69a;
+  color: #fff;
+}
+
+/* Artist Info */
+.artist-info-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.artist-image img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.artist-metrics {
+  flex: 1;
+  min-width: 200px;
+  max-width: 100%;
+}
+
+.artist-metrics h4 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.artist-metrics p {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.artist-metrics .row {
+  margin-bottom: 15px;
+}
+
+.spotify-link {
+  color: #1DB954;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.spotify-link:hover {
+  text-decoration: underline;
+}
+
+/* Trade Controls */
+.trade-controls {
+  margin-top: 20px;
+}
+
+.trade-controls .form-group {
+  max-width: 200px;
+}
+
+.trade-controls .form-control {
+  background: #3e4b50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
+
+.trade-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.trade-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.btn-outline-primary {
+  border-color: #26a69a;
+  color: #26a69a;
+}
+
+.btn-outline-primary:hover {
+  background: #26a69a;
+  color: #fff;
+}
+
+.btn-success {
+  background: #26a69a;
+  border: none;
+}
+
+.btn-danger {
+  background: #ef5350;
+  border: none;
+}
+
+/* Chart */
+.chart-wrapper {
+  width: 100%;
+  max-width: 100%;
+  background: #1c2526;
+  border: 1px solid #2d3a3e;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+}
+
+.chart-controls {
+  padding: 6px;
+  background: #2a2e39;
+  border-bottom: 1px solid #2d3a3e;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.chart-controls button,
+.chart-controls .chart-control-btn {
+  padding: 3px 6px; /* Smaller buttons */
+  font-size: 10px;
+  border-radius: 3px;
+  border: 1px solid #666;
+  background: #2d3a3e;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chart-controls button.active,
+.chart-controls .chart-control-btn.active {
+  background: #1DB954;
+  border-color: #1DB954;
+}
+
+.chart-controls .chart-control-input {
+  width: 50px; /* Smaller input */
+  padding: 3px;
+  font-size: 10px;
+  border-radius: 3px;
+  border: 1px solid #666;
+  background: #2d3a3e;
+  color: #fff;
+}
+
+.chart-container {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+  min-width: 100px;
+}
+
+.chart-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(28, 37, 38, 0.8);
+  z-index: 10;
+  color: #f8f9f8;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.chart-overlay.text-danger {
+  color: #ef5350;
+}
+
+.chart-overlay.text-muted {
+  color: #f8f9fa;
+}
+
+.chart-footer {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  padding: 10px;
+}
+
+.chart-overlay .retry-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  background: #26a69a;
+  color: #fff;
+  cursor: pointer;
+}
+
+.chart-overlay .retry-btn:hover {
+  background: #1b7b73;
+}
+
+/* Transactions Table */
+.live-transactions {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.trade-table-container {
+  max-height: 300px;
+  overflow-y: auto;
+  width: 100%;
+  min-height: 300px;
+}
+
+.trade-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.trade-table th,
+.trade-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #3e4b50;
+}
+
+.trade-table th {
+  background: #2d3a3e;
+  position: sticky;
+  top: 0;
+}
+
+.trade-table a {
+  color: #26a69a;
+  text-decoration: none;
+}
+
+.trade-table a:hover {
+  text-decoration: underline;
+}
+
+.no-trades {
+  color: #888;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ChatBox */
+.chatbox {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Fill the Card.Body */
+  background: #2d3a3e; /* Match theme */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Bootstrap-like shadow */
+}
+
+.messages {
+  flex-grow: 1; /* Take available space */
+  overflow-y: auto; /* Enable scrolling */
+  padding: 10px 0; /* Vertical padding only, no horizontal to avoid squeezing */
+  color: #fff;
+  text-align: left; /* Left-align messages */
+  width: 100%; /* Ensure full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+  /* Prevent scrollbar from overlapping content */
+  overflow-x: hidden; /* Avoid horizontal overflow */
+  margin-right: -17px; /* Compensate for scrollbar width (approx. 17px) */
+  padding-right: 17px; /* Add padding to offset margin */
+}
+
+.message,
+.no-messages,
+.loading {
+  margin-bottom: 10px;
+  padding: 0 20px; /* Increased padding for better spacing */
+  width: 100%; /* Ensure full width */
+  word-wrap: break-word; /* Allow long words to break if necessary */
+  display: block; /* Ensure block-level behavior */
+  box-sizing: border-box; /* Include padding in width */
+  max-width: 100%; /* Prevent exceeding container */
+}
+.user {
+  font-weight: bold;
+  margin-right: 5px; /* Space between user and text */
+}
+
+.input-container {
+  display: flex;
+  padding: 10px;
+  background: #1c2526; /* Darker background for contrast */
+  border-top: 1px solid #2d3a3e;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-left: -0.75rem; /* Match Bootstrap's g-4 gutter */
+  margin-right: -0.75rem;
+}
+
+.col-md-8 {
+  flex: 0 0 66.666667%; /* Bootstrap's default for md={8} */
+  max-width: 66.666667%;
+  width: 100%;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.col-md-4 {
+  flex: 0 0 33.333333%; /* Bootstrap's default for md={4} */
+  max-width: 33.333333%;
+  width: 100%;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .artist-details {
+    padding: 10px;
+    width: 100%;
+  }
+  .row {
+    flex-direction: column;
+    width: 100%;
+  }
+  .col-md-8,
+  .col-md-4,
+  .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .chart-container {
+    height: 400px;
+    width: 100%;
+    min-width: 100px;
+  }
+  .card-body {
+    padding: 5px;
+  }
+  .trade-table-container {
+    max-height: 250px;
+    width: 100%;
+    min-height: 250px;
+  }
+  .chat-box {
+    max-height: 250px;
+    width: 100%;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+  }
+  .artist-image img {
+    width: 80px;
+    height: 80px;
+  }
+  .artist-metrics {
+    min-width: 100%;
+  }
+  .trade-btn {
+    min-width: 60px;
+  }
+  .form-control {
+    max-width: 100%;
+  }
+  .chart-controls button,
+  .chart-controls .chart-control-btn {
+    padding: 2px 4px;
+    font-size: 9px;
+  }
+  .chart-controls .chart-control-input {
+    width: 40px;
+    padding: 2px;
+    font-size: 9px;
+  }
+}
+.chart-card-body {
+  padding: 20px;
+  width: 100%;
+  position: relative;
+}
+.chart-inner-wrapper {
+  width: 100%;
+  height: auto;
+  position: relative;
+  max-height: 100%;
+}
+.transactions-card-body {
+  padding: 20px;
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+}

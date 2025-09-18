@@ -1,0 +1,87 @@
+.searchContainer {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.searchInput {
+  background: #2a2a2a;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 8px 0 0 8px;
+  border: none;
+  width: 100%;
+  max-width: 400px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #1e90ff;
+}
+
+.searchButton {
+  background: #1e90ff;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.searchButton:hover {
+  background: #40c4ff;
+}
+
+.artistList {
+  background: #1a1a1a;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 9;
+}
+
+.artistListItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.artistListItem:hover {
+  background: #3a3a3a;
+}
+
+.artistListItem.selected {
+  background: #1e90ff;
+  color: #ffffff;
+}
+
+.artistListContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.artistListImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
