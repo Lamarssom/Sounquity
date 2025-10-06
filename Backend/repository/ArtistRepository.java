@@ -39,9 +39,14 @@ public interface ArtistRepository extends JpaRepository<Artist, String> {
     @Query("SELECT a.contractAddress FROM Artist a WHERE a.id = ?1")
     Optional<String> findContractAddressByArtistId(String artistId);
 
+    // Modified to limit to one result and avoid NonUniqueResultException
     @Query("SELECT a.id FROM Artist a WHERE a.contractAddress = ?1")
-    Optional<String> findArtistIdByContractAddress(String contractAddress);
+    List<String> findArtistIdsByContractAddress(String contractAddress);
 
-    @Query("SELECT a.contractAddress FROM Artist a WHERE a.contractAddress IS NOT NULL")
+    @Query("SELECT a.contractAddress FROM Artist a WHERE a.contractAddress IS NOT NULL AND a.contractAddress != '0x0000000000000000000000000000000000000000'")
     List<String> findAllContractAddresses();
+
+    // Debug query to check for duplicates
+    @Query("SELECT a.id, a.name FROM Artist a WHERE a.contractAddress = ?1")
+    List<Object[]> debugArtistIdsByContractAddress(String contractAddress);
 }
