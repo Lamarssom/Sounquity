@@ -1,7 +1,7 @@
 package com.musicinvestment.musicapp.model;
 
 import lombok.Data;
-import java.time.LocalDateTime
+import java.time.LocalDateTime;
 
 @Data
 public class Financials {
@@ -26,3 +26,4 @@ public class Financials {
     }
 
 }
+
