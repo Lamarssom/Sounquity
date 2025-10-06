@@ -780,4 +780,5 @@ const ArtistSharesTokenABI = rawAbi.abi || rawAbi;
   );
 };
 
+
 export default ArtistDetails;
