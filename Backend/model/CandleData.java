@@ -50,6 +50,9 @@ public class CandleData {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal volume;
 
+    @Column(name = "last_event_type", nullable = true)
+    private String lastEventType;
+
     // Constructors
     public CandleData() {}
 
@@ -66,6 +69,8 @@ public class CandleData {
     }
 
     // Getters and Setters
+    public String getLastEventType() { return lastEventType; }
+    public void setLastEventType(String lastEventType) { this.lastEventType = lastEventType; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getArtistId() { return artistId; }
