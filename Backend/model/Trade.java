@@ -35,8 +35,20 @@ public class Trade {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(name = "timestamp_string")
+    private String timestampString;
+
     @Column(name = "buyer_or_seller", nullable = false)
     private String buyerOrSeller;
+
+    @Column(name = "tx_hash")
+    private String txHash;
+
+    @Column(name = "amount_in_usd")
+    private Double amountInUsd;
+
+    @Column(name = "price_in_usd")
+    private Double priceInUsd;
 
     public enum EventType {
         BUY, SELL
