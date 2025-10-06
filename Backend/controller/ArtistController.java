@@ -5,6 +5,7 @@ import com.musicinvestment.musicapp.model.Artist;
 import com.musicinvestment.musicapp.model.CandleData;
 import com.musicinvestment.musicapp.model.Timeframe;
 import com.musicinvestment.musicapp.service.ArtistService;
+import com.musicinvestment.musicapp.service.BlockchainSyncService;
 import com.musicinvestment.musicapp.service.CandleDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/api/artists")
@@ -29,11 +26,13 @@ public class ArtistController {
 
     private final ArtistService artistService;
     private final CandleDataService candleDataService;
+    private final BlockchainSyncService blockchainSyncService;
 
     @Autowired
-    public ArtistController(ArtistService artistService, CandleDataService candleDataService) {
+    public ArtistController(ArtistService artistService, CandleDataService candleDataService, BlockchainSyncService blockchainSyncService) {
         this.artistService = artistService;
         this.candleDataService = candleDataService;
+        this.blockchainSyncService = blockchainSyncService;
         logger.info("ArtistController initialized");
     }
 
@@ -43,6 +42,7 @@ public class ArtistController {
         List<Artist> artists = artistService.getAllArtists();
         logger.info("Fetched artists count: {}", artists.size());
         return artists.stream()
+                     .sorted((a, b) -> Integer.compare(b.getPopularity(), a.getPopularity()))
                      .map(ArtistSharesDto::fromArtist)
                      .collect(Collectors.toList());
     }
@@ -109,6 +109,7 @@ public class ArtistController {
             throw new IllegalArgumentException("Contract address must not be empty");
         }
         artistService.updateContractAddress(id, contractAddress);
+        blockchainSyncService.subscribeToNewContract(contractAddress);
         return ResponseEntity.ok(Map.of("message", "Contract address updated successfully."));
     }
 
@@ -163,17 +164,13 @@ public class ArtistController {
     @GetMapping("/candleData")
     public ResponseEntity<List<CandleData>> getCandleData(
             @RequestParam String artistId,
-            @RequestParam(required = false) String timeframe) {
+            @RequestParam String timeframe) {
         logger.info("Fetching candle data for artist ID: {}, timeframe: {}", artistId, timeframe);
         try {
-            List<CandleData> candleData;
-            if (timeframe != null && !timeframe.isEmpty()) {
-                Timeframe tf = Timeframe.fromValue(timeframe);
-                candleData = candleDataService.getCandleDataByArtistIdAndTimeframe(artistId, tf);
-            } else {
-                candleData = candleDataService.getCandleDataByArtistId(artistId);
-            }
-            candleData = aggregateCandleData(candleData, timeframe);
+            Timeframe tf = Timeframe.fromValue(timeframe.toUpperCase());
+            logger.info("Parsed timeframe: {}", tf);
+            List<CandleData> candleData = candleDataService.getCandleDataByArtistIdAndTimeframe(artistId, tf);
+            logger.info("Returning {} candles for artistId={}, timeframe={}", candleData.size(), artistId, timeframe);
             return ResponseEntity.ok(candleData);
         } catch (IllegalArgumentException e) {
             logger.error("Invalid timeframe for artist ID {}: {}", artistId, e.getMessage());
@@ -184,77 +181,6 @@ public class ArtistController {
         }
     }
 
-    private List<CandleData> aggregateCandleData(List<CandleData> candles, String timeframe) {
-        if (candles == null || candles.isEmpty() || timeframe == null || timeframe.isEmpty()) {
-            return candles;
-        }
-
-        long intervalSeconds;
-        switch (timeframe) {
-            case "1m":
-                intervalSeconds = 60;
-                break;
-            case "5m":
-                intervalSeconds = 300;
-                break;
-            case "15m":
-                intervalSeconds = 900;
-                break;
-            case "1H":
-                intervalSeconds = 3600;
-                break;
-            case "4H":
-                intervalSeconds = 14400;
-                break;
-            case "1D":
-                intervalSeconds = 86400;
-                break;
-            default:
-                return candles;
-        }
-
-        Map<Long, List<CandleData>> groupedByTime = candles.stream()
-                .collect(Collectors.groupingBy(
-                        candle -> {
-                            long timestampSeconds = candle.getTimestamp().toEpochSecond(java.time.ZoneOffset.UTC);
-                            return timestampSeconds - (timestampSeconds % intervalSeconds);
-                        }));
-
-        return groupedByTime.entrySet().stream()
-                .map(entry -> {
-                    List<CandleData> group = entry.getValue();
-                    CandleData first = group.get(0);
-                    CandleData aggregated = new CandleData();
-                    aggregated.setArtistId(first.getArtistId());
-                    aggregated.setTimeframe(Timeframe.fromValue(timeframe));
-                    aggregated.setTimestamp(LocalDateTime.ofEpochSecond(entry.getKey(), 0, java.time.ZoneOffset.UTC));
-
-                    BigDecimal open = first.getOpen();
-                    BigDecimal high = group.stream()
-                            .map(CandleData::getHigh)
-                            .max(BigDecimal::compareTo)
-                            .orElse(first.getHigh());
-                    BigDecimal low = group.stream()
-                            .map(CandleData::getLow)
-                            .min(BigDecimal::compareTo)
-                            .orElse(first.getLow());
-                    BigDecimal close = group.get(group.size() - 1).getClose();
-                    BigDecimal volume = group.stream()
-                            .map(CandleData::getVolume)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    aggregated.setOpen(open);
-                    aggregated.setHigh(high);
-                    aggregated.setLow(low);
-                    aggregated.setClose(close);
-                    aggregated.setVolume(volume);
-
-                    return aggregated;
-                })
-                .sorted((a, b) -> a.getTimestamp().compareTo(b.getTimestamp()))
-                .collect(Collectors.toList());
-    }
-
     private String extractArtistIdFromSpotifyLink(String link) {
         logger.info("Extracting artist ID from Spotify link: {}", link);
         if (link == null || link.trim().isEmpty()) {
@@ -262,23 +188,19 @@ public class ArtistController {
             return null;
         }
 
-        // Trim any trailing or leading spaces
         String cleanedLink = link.trim();
         try {
-            // Check if the link matches the expected Spotify artist URL pattern
             if (!cleanedLink.contains("open.spotify.com/artist/")) {
                 logger.warn("Invalid Spotify link format: {}", cleanedLink);
                 return null;
             }
 
-            // Extract the artist ID using string manipulation
             String[] parts = cleanedLink.split("/artist/");
             if (parts.length < 2) {
                 logger.warn("Could not split link to extract artist ID: {}", cleanedLink);
                 return null;
             }
 
-            // Get the part after /artist/ and remove any query parameters or trailing characters
             String artistId = parts[1].split("[?\\s]")[0];
             if (artistId.isEmpty()) {
                 logger.warn("Extracted artist ID is empty: {}", cleanedLink);
