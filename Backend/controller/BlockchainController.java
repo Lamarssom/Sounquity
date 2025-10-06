@@ -5,6 +5,9 @@ import com.musicinvestment.musicapp.service.BlockchainSyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import java.time.LocalDateTime;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -15,10 +18,12 @@ import java.util.stream.Collectors;
 public class BlockchainController {
 
     private final BlockchainSyncService blockchainSyncService;
+    private final CacheManager cacheManager;
 
     @Autowired
-    public BlockchainController(BlockchainSyncService blockchainSyncService) {
+    public BlockchainController(BlockchainSyncService blockchainSyncService, CacheManager cacheManager) {
         this.blockchainSyncService = blockchainSyncService;
+        this.cacheManager = cacheManager;
     }
 
     @GetMapping("/current-price/{artistId}")
@@ -73,7 +78,15 @@ public class BlockchainController {
             Financials financials = blockchainSyncService.computeFinancials(artistId);
             return ResponseEntity.ok(financials);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new Financials("N/A", "N/A", "N/A"));
+            return ResponseEntity.status(500).body(new Financials(
+                "N/A", // currentPrice
+                "N/A", // volume24h
+                "N/A", // marketCap
+                0.0,   // dailyLiquidity
+                100.0, // liquidityPercentage (100% as default, assuming no trades)
+                0L,    // availableSupply
+                null   // nextReset
+            ));
         }
     }
 
@@ -87,5 +100,24 @@ public class BlockchainController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(List.of());
         }
+    }
+
+    @PostMapping("/subscribe/{contractAddress}")
+    public ResponseEntity<String> subscribeToContract(@PathVariable String contractAddress) {
+        try {
+            blockchainSyncService.subscribeToNewContract(contractAddress);
+            return ResponseEntity.ok("Subscribed to contract " + contractAddress);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error subscribing to contract " + contractAddress + ": " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/clear-caches")
+    public ResponseEntity<String> clearCaches() {
+        cacheManager.getCacheNames().forEach(cacheName -> {
+            Cache cache = cacheManager.getCache(cacheName);
+            if (cache != null) cache.clear();
+        });
+        return ResponseEntity.ok("All caches cleared");
     }
 }
