@@ -22,14 +22,17 @@ public class SyncService {
     private final BlockchainSyncService blockchainSyncService;
     private final CandleDataService candleDataService;
     private final SpotifyService spotifyService;
+    private final ContractService contractService;
 
     @Autowired
     public SyncService(ArtistService artistService, BlockchainSyncService blockchainSyncService,
-                       CandleDataService candleDataService, SpotifyService spotifyService) {
+                       CandleDataService candleDataService, SpotifyService spotifyService,
+                       ContractService contractService) {
         this.artistService = artistService;
         this.blockchainSyncService = blockchainSyncService;
         this.candleDataService = candleDataService;
         this.spotifyService = spotifyService;
+        this.contractService = contractService;
     }
 
     @Scheduled(fixedRate = 300000) // Every 5 minutes
@@ -45,19 +48,19 @@ public class SyncService {
                 }
 
                 // Update price and volume
-                String currentPrice = blockchainSyncService.getCurrentPrice(artistId);
-                String totalVolume = blockchainSyncService.getTotalVolumeTraded(artistId);
-                if (currentPrice.equals("0") || totalVolume.equals("0")) {
+                BigDecimal currentPrice = blockchainSyncService.getCurrentPriceRaw(artistId);
+                BigDecimal totalVolume = blockchainSyncService.getTotalVolumeTradedRaw(artistId);
+                if (currentPrice.equals(BigDecimal.ZERO) || totalVolume.equals(BigDecimal.ZERO)) {
                     System.out.println("Skipping sync for artistId " + artistId + ": Invalid price or volume");
                     continue;
                 }
 
-                artist.setCurrentPrice(Double.parseDouble(currentPrice) / 1e8);
-                artist.setTotalVolume(Integer.parseInt(totalVolume));
+                artist.setCurrentPrice(currentPrice.doubleValue());
+                artist.setTotalVolume(totalVolume.intValue());
                 artistService.updateArtistInfo(artistId, ArtistSharesDto.fromArtist(artist));
 
                 // Fetch and save candle data for all timeframes
-                ArtistSharesToken token = blockchainSyncService.loadTokenContract(contractAddress);
+                ArtistSharesToken token = contractService.loadTokenContract(contractAddress);
                 long[] timeframes = {60, 300, 900, 3600, 14400, 86400}; // 1m, 5m, 15m, 1h, 4h, 1D
                 Timeframe[] timeframeEnums = {
                     Timeframe.ONE_MINUTE,
