@@ -66,7 +66,11 @@ const ArtistSharesTokenABI = rawAbi.abi || rawAbi;
         dailyLiquidity: artistDetails?.dailyLiquidity || 0,
         liquidityPercentage: artistDetails?.liquidityPercentage || 100,
         availableShares: artistDetails?.availableShares || 0,
-        nextReset: artistDetails?.nextReset || null,
+        nextReset: financials.nextReset ? (() => {
+          const [year, month, day, hour, minute, second, nano] = financials.nextReset;
+          const millis = Math.floor(nano / 1000000); // Convert nanos to millis
+          return new Date(year, month - 1, day, hour, minute, second, millis);
+        })() : null,
       }),
       [artistDetails, financials]
     );
@@ -782,3 +786,4 @@ const ArtistSharesTokenABI = rawAbi.abi || rawAbi;
 
 
 export default ArtistDetails;
+
