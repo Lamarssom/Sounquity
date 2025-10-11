@@ -52,13 +52,15 @@ const Home = ({ message }) => {
 
               return { ...artist, contractAddress };
             } catch (err) {
-              console.error(`Error fetching contract address for artist ${artist.artistName}:, err`);
+              console.error(`Error fetching contract address for artist ${artist.artistName}:`, err);
               return { ...artist, contractAddress: null };
             }
           })
         );
 
-        setArtists(artistsWithContractAddress);
+        // Sort artists by popularity (descending)
+        const sortedArtists = artistsWithContractAddress.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+        setArtists(sortedArtists);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching artist data:", err);
@@ -88,7 +90,13 @@ const Home = ({ message }) => {
     try {
       console.log(`Searching artists with term: ${searchTerm}`);
       const response = await axios.get(
-        `http://localhost:8080/api/artists/search?name=${encodeURIComponent(searchTerm)}`
+        `http://localhost:8080/api/artists/search?name=${encodeURIComponent(searchTerm)}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders(),
+          },
+        }
       );
       console.log("Search results:", response.data);
       setSearchResults(response.data);
