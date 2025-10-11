@@ -129,7 +129,7 @@ const ConnectWallet = () => {
               .call();
             return { ...artist, contractAddress };
           } catch (err) {
-            console.error(`[ConnectWallet] Error fetching contract address for ${artist.artistName}:, err`);
+            console.error(`[ConnectWallet] Error fetching contract address for ${artist.artistName}:`, err);
             return { ...artist, contractAddress: null };
           }
         })
@@ -231,7 +231,7 @@ const ConnectWallet = () => {
       {isConnected && isAuthenticated ? (
         <div className={styles.connected}>
           <span className={styles.account}>
-            Wallet Connected: {`address ? ${address.slice(0, 6)}...${address.slice(-4)} : 'Unknown'`}
+            Wallet Connected: {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Unknown'}
           </span>
           <button onClick={handleDisconnect} className={styles.disconnectButton}>
             Disconnect
