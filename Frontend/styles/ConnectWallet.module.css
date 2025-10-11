@@ -11,17 +11,17 @@
 }
 
 .account {
-  color: #ffffff;
+  color: var(--sounquity-text);
   font-size: 14px;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--sounquity-card);
   padding: 6px 12px;
   border-radius: 12px;
 }
 
 .connectButton {
-  background: linear-gradient(90deg, #00d4ff, #7b3fe4);
-  color: #ffffff;
+  background: linear-gradient(90deg, var(--sounquity-yellow), var(--sounquity-green));
+  color: var(--sounquity-dark);
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -35,14 +35,14 @@
 }
 
 .connectButton.disabled {
-  background: #4a4a6e;
+  background: var(--sounquity-card);
   cursor: not-allowed;
   opacity: 0.7;
 }
 
 .disconnectButton {
   background: linear-gradient(90deg, #ff4d4d, #ff1a1a);
-  color: #ffffff;
+  color: var(--sounquity-text);
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -63,7 +63,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background: #1a1a1a;
+  background: var(--sounquity-card);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   z-index: 1000;
@@ -73,7 +73,7 @@
 
 .dropdownItem {
   background: none;
-  color: #ffffff;
+  color: var(--sounquity-text);
   padding: 10px 16px;
   border: none;
   width: 100%;
@@ -84,12 +84,12 @@
 }
 
 .dropdownItem:hover {
-  background: #3a3a3a;
+  background: rgba(255, 215, 0, 0.1);
 }
 
 .modal {
-  background: #1a1a1a;
-  color: #ffffff;
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
   padding: 24px;
   border-radius: 16px;
   width: 90%;
@@ -98,7 +98,7 @@
   outline: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   position: relative;
-  z-index: 2000; /* Higher z-index to overlay homepage content */
+  z-index: 2000;
 }
 
 .overlay {
@@ -111,21 +111,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1500; /* Above page content but below modal */
+  z-index: 1500;
 }
 
 .overlay.active {
-  pointer-events: none; /* Disable interactions with underlying page */
+  pointer-events: none;
 }
 
 .modalTitle {
   font-size: 24px;
   font-weight: 700;
+  color: var(--sounquity-yellow);
   margin-bottom: 16px;
 }
 
 .modalSubtitle {
   font-size: 16px;
+  color: var(--sounquity-text);
   opacity: 0.8;
   margin-bottom: 16px;
   position: relative;
@@ -133,12 +135,12 @@
 }
 
 .artistList {
-  background: #1a1a1a;
+  background: var(--sounquity-card);
   border-radius: 8px;
   max-height: 300px;
   overflow-y: auto;
   margin-top: 16px;
-  padding: 8px 0; /* Added padding to prevent overlap with subtitle */
+  padding: 8px 0;
   position: relative;
   width: 100%;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -154,12 +156,12 @@
 }
 
 .artistListItem:hover {
-  background: #3a3a3a;
+  background: rgba(255, 215, 0, 0.1);
 }
 
 .artistListItem.selected {
-  background: #1e90ff;
-  color: #ffffff;
+  background: var(--sounquity-green);
+  color: var(--sounquity-dark);
 }
 
 .artistListContent {
@@ -176,13 +178,13 @@
 }
 
 .loading {
-  color: #ffffff;
+  color: var(--sounquity-text);
   font-size: 14px;
   text-align: center;
 }
 
 .noResults {
-  color: #ffffff;
+  color: var(--sounquity-text);
   font-size: 14px;
   text-align: center;
   opacity: 0.8;
@@ -203,8 +205,8 @@
 }
 
 .cancelButton {
-  background: #4a4a6e;
-  color: #ffffff;
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -213,11 +215,11 @@
 }
 
 .cancelButton:hover {
-  background: #5a5a7e;
+  background: rgba(255, 215, 0, 0.1);
 }
 
 .disabled {
-  background: #4a4a6e;
+  background: var(--sounquity-card);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -235,7 +237,7 @@
   justify-content: center;
   z-index: 20;
   border-radius: 16px;
-  color: #ffffff;
+  color: var(--sounquity-text);
   font-size: 16px;
   gap: 10px;
 }
