@@ -1,11 +1,12 @@
 /* src/styles/ArtistCard.css */
 .artist-card {
-  width: 18rem;
-  background-color: #2a2a3e;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 350px;
+  background: var(--sounquity-card);
+  border: 1px solid var(--sounquity-yellow);
+  border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
 }
 
 .artist-card:hover {
@@ -13,52 +14,53 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-.artist-card img {
-  height: 200px;
+.artist-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
 }
 
-.artist-card .card-body {
+.card-body {
   padding: 16px;
-  color: #ffffff;
+  color: var(--sounquity-text);
 }
 
-.artist-card .card-title {
+.card-title {
   font-size: 20px;
   font-weight: 600;
-  color: #00d4ff;
+  color: var(--sounquity-yellow);
   margin-bottom: 12px;
 }
 
-.artist-card .card-text {
+.card-text {
   font-size: 14px;
-  color: #d1d1d1;
+  color: var(--sounquity-text);
   line-height: 1.6;
 }
 
-.artist-card .card-text strong {
-  color: #ffffff;
+.card-text strong {
+  color: var(--sounquity-green);
 }
 
-.artist-card .btn-success {
-  background-color: #28a745;
-  border: none;
-  width: 100%;
-  padding: 10px;
+.btn-gradient {
   font-size: 16px;
-  border-radius: 5px;
+  padding: 10px;
+  border-radius: 8px;
   transition: background-color 0.3s ease;
-}
-
-.artist-card .btn-success:hover {
-  background-color: #218838;
 }
 
 @media (max-width: 768px) {
   .artist-card {
-    width: 100%;
-    max-width: 16rem;
+    max-width: 300px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
+  .card-text {
+    font-size: 13px;
   }
 }
