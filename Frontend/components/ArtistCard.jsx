@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import {
   getContractAddressFromFactory,
   createArtistTokenOnFactory,
-  getPlatformAddress,
 } from "../utilities/blockchain";
 import { getAuthHeaders } from "../utilities/auth";
 import SpotifyService from "../services/SpotifyService";
@@ -20,27 +21,59 @@ const generateSymbol = (name) => {
   return `${base}${randomSuffix}`;
 };
 
+const formatMarketCap = (value) => {
+  try {
+    if (typeof value === "string" && value !== "N/A") {
+      return value;
+    }
+    const parsed = typeof value === "number" ? value : parseFloat(value.toString());
+    if (isNaN(parsed) || parsed === null) return "N/A";
+    if (parsed >= 1_000_000_000_000) return `$${(parsed / 1_000_000_000_000).toFixed(2)}T`;
+    if (parsed >= 1_000_000_000) return `$${(parsed / 1_000_000_000).toFixed(2)}B`;
+    if (parsed >= 1_000_000) return `$${(parsed / 1_000_000).toFixed(2)}M`;
+    if (parsed >= 1_000) return `$${(parsed / 1_000).toFixed(2)}K`;
+    return `$${parsed.toFixed(2)}`;
+  } catch (err) {
+    console.error("formatMarketCap error:", err);
+    return "N/A";
+  }
+};
+
 const ArtistCard = ({ artist, onViewDetails }) => {
   const navigate = useNavigate();
-  const [platformAddress, setPlatformAddress] = useState(null);
-
-  const { currentPrice, volume, marketCap } = {
-    currentPrice: artist.currentPrice || "N/A",
-    volume: artist.totalVolume || "N/A",
-    marketCap: artist.marketCap || "N/A",
-  };
+  const [financials, setFinancials] = useState({
+    currentPrice: "N/A",
+    volume: "N/A",
+    marketCap: "N/A",
+  });
 
   useEffect(() => {
-    const fetchPlatformAddress = async () => {
+    const fetchFinancials = async () => {
       try {
-        const address = await getPlatformAddress();
-        setPlatformAddress(address);
+        const artistId = artist.spotifyId || artist.id || artist.artistId;
+        if (!artistId) {
+          console.warn("[ArtistCard] No artistId for financials fetch, artist:", artist);
+          return;
+        }
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/blockchain/financials/${artistId}`, {
+          headers: getAuthHeaders(),
+        });
+        const fetchedFinancials = {
+          currentPrice: response.data.currentPrice || "N/A",
+          volume: response.data.volume24h || "N/A",
+          marketCap: response.data.marketCap || "N/A",
+        };
+        if (fetchedFinancials.marketCap !== "N/A") {
+          console.log(`[ArtistCard] Financials fetched for artistId ${artistId}:`, fetchedFinancials);
+        }
+        setFinancials(fetchedFinancials);
       } catch (error) {
-        console.error("[ArtistCard] Error fetching platform address:", error);
+        console.error(`[ArtistCard] Error fetching financials for artistId ${artist.spotifyId || artist.id || artist.artistId}:`, error.response ? error.response.data : error.message);
       }
     };
-    fetchPlatformAddress();
-  }, []);
+
+    fetchFinancials();
+  }, [artist]);
 
   if (!artist) return <div>Loading artist info...</div>;
 
@@ -91,7 +124,6 @@ const ArtistCard = ({ artist, onViewDetails }) => {
           return;
         }
 
-        // Update backend with contract address
         try {
           const response = await axios.put(
             `${import.meta.env.VITE_API_URL}/api/artists/${artistId}/update-contract`,
@@ -117,37 +149,40 @@ const ArtistCard = ({ artist, onViewDetails }) => {
   };
 
   return (
-    <div className="artist-card mb-4">
-      <img
-        src={isValidUrl ? artist.imageUrl : placeholderImage}
-        alt={artist.name || artist.artistName || "Artist"}
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = placeholderImage;
-        }}
-        className="artist-image"
-      />
-      <div className="card-body">
-        <h5 className="card-title">{artist.name || artist.artistName || "Unknown Artist"}</h5>
-        <p className="card-text">
-          <strong>Symbol:</strong> {artist.symbol || generateSymbol(artist.name || artist.artistName || "Unknown")}
-          <br />
-          <strong>Current Price:</strong> {currentPrice}
-          <br />
-          <strong>24h Volume:</strong> {volume}
-          <br />
-          <strong>Market Cap:</strong> {marketCap}
-          <br />
-          <strong>Popularity:</strong> {artist.popularity || "—"}
-        </p>
-        {platformAddress && (
-          <p className="card-text" style={{ fontSize: "12px", wordBreak: "break-word" }}>
-            <strong>Platform:</strong> {platformAddress}
-          </p>
-        )}
-        <button className="btn btn-success" onClick={handleViewDetails}>
-          View Details
-        </button>
+    <div className="artist-card card card-glass mb-4">
+      <div className="row g-0">
+        <div className="col-4">
+          <LazyLoadImage
+            src={isValidUrl ? artist.imageUrl : placeholderImage}
+            alt={artist.name || artist.artistName || "Artist"}
+            className="artist-image img-fluid"
+            effect="blur"
+            placeholderSrc={placeholderImage}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = placeholderImage;
+            }}
+          />
+        </div>
+        <div className="col-8">
+          <div className="card-body">
+            <h5 className="card-title">{artist.name || artist.artistName || "Unknown Artist"}</h5>
+            <p className="card-text">
+              <strong>Symbol:</strong> {artist.symbol || generateSymbol(artist.name || artist.artistName || "Unknown")}
+              <br />
+              <strong>Current Price:</strong> {financials.currentPrice}
+              <br />
+              <strong>24h Volume:</strong> {financials.volume}
+              <br />
+              <strong>Market Cap:</strong> {financials.marketCap}
+              <br />
+              <strong>Popularity:</strong> {artist.popularity || "—"}
+            </p>
+            <button className="btn btn-gradient w-100" onClick={handleViewDetails}>
+              View Details
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
