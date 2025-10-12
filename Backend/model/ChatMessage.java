@@ -16,19 +16,18 @@ public class ChatMessage {
     private Integer id;
 
     @NotNull
-    @Column(name = "artistId", nullable = false)
+    @Column(name = "artist_id", nullable = false)
     private String artistId;
 
     @NotNull
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
     @NotNull
     @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
 
-    @NotNull
-    @Column(nullable = false)
+    @Column(name = "timestamp")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
 
