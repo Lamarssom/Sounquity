@@ -7,14 +7,16 @@ contract ArtistSharesFactory {
     address[] public deployedTokens;
     address public platformAddress;
     address public priceFeedAddress;
+    address public uniswapRouterAddress;
 
     mapping(string => address) public artistToToken;
 
     event ArtistTokenCreated(address tokenAddress, string artistId, string artistName);
 
-    constructor(address _platformAddress, address _priceFeedAddress) {
+    constructor(address _platformAddress, address _priceFeedAddress, address _uniswapRouterAddress) {
         platformAddress = _platformAddress;
         priceFeedAddress = _priceFeedAddress;
+        uniswapRouterAddress = _uniswapRouterAddress;
     }
 
     function createArtistToken(
@@ -27,18 +29,14 @@ contract ArtistSharesFactory {
         require(artistToToken[artistId] == address(0), "Artist already registered");
         require(popularity <= 100, "Popularity must be 0-100");
 
-        uint256 initialSupply = 1_000_000_000 * 10**18; // 1 billion tokens
-        uint256 basePrice = 0.001 ether; // $3.50 at $3,500/ETH
-
         ArtistSharesToken newToken = new ArtistSharesToken(
             name,
             symbol,
-            initialSupply,
-            basePrice,
-            platformAddress,
             teamWallet,
-            popularity,
-            priceFeedAddress
+            platformAddress,
+            priceFeedAddress,
+            uniswapRouterAddress,
+            popularity
         );
 
         deployedTokens.push(address(newToken));
