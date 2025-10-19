@@ -15,7 +15,13 @@ Sounquity is a full-stack Dapp that enables users to discover artists, connect w
 - Spotify-like artist discovery (search, artist cards)
 - Wallet integration for token trading
 - Real-time trade syncing via blockchain event listeners
-- Smart contracts for artist token creation (2% fee)
+- Dynamic Bonding Curve: Token price adjusts with supply and demand until liquidity migrates to Uniswap.
+-	Oracle-Pegged Pricing: Real-time ETH/USD feed from Chainlink ensures fair valuations.
+-	Built-in Airdrop & Vesting: Automated distribution and time-based unlocking for artists, users, and the platform.
+-	Fee & Limit Controls: Tiered buy/sell fees, daily trade caps, and anti-dump mechanisms maintain stability.
+-	On-Chain Candlestick Data: Price and volume history stored directly on-chain for live charts.
+-	Automatic Uniswap Integration: Liquidity seamlessly transitions to Uniswap once curve thresholds are met.
+-		Secure & Modular: Uses OpenZeppelin standards, Uniswap v2 libraries, and Chainlink data feeds
 
 ## Project Structure
 - backend/: Spring Boot APIs and blockchain sync (e.g., BlockchainSyncService)
@@ -40,4 +46,5 @@ Sounquity is a full-stack Dapp that enables users to discover artists, connect w
 In development, with core features (artist search, wallet connect, token trading) functional. Not yet deployed live.
 
 ## License
+
 MIT License
