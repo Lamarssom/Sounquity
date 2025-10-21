@@ -170,13 +170,24 @@ public class ArtistController {
             Timeframe tf = Timeframe.fromValue(timeframe.toUpperCase());
             logger.info("Parsed timeframe: {}", tf);
             List<CandleData> candleData = candleDataService.getCandleDataByArtistIdAndTimeframe(artistId, tf);
+            
+            // DEBUG: Log RAW precision
+            candleData.forEach(candle -> {
+                String spread = candle.getHigh().subtract(candle.getLow()).toPlainString();
+                logger.info("Candle OHLC RAW: O={}, H={}, L={}, C={}, SPREAD={}, VOL={}", 
+                    candle.getOpen().toPlainString(),
+                    candle.getHigh().toPlainString(),
+                    candle.getLow().toPlainString(),
+                    candle.getClose().toPlainString(),
+                    spread,
+                    candle.getVolume().toPlainString()
+                );
+            });
+            
             logger.info("Returning {} candles for artistId={}, timeframe={}", candleData.size(), artistId, timeframe);
             return ResponseEntity.ok(candleData);
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid timeframe for artist ID {}: {}", artistId, e.getMessage());
-            return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
-            logger.error("Error fetching candle data for artist ID {}: {}", artistId, e.getMessage());
+            logger.error("Error fetching candle data: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(null);
         }
     }
