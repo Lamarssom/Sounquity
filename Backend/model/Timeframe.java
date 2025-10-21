@@ -34,4 +34,17 @@ public enum Timeframe {
         }
         throw new IllegalArgumentException("Unknown timeframe value: " + value);
     }
+    // Add this method to your Timeframe enum
+    public long getIntervalSeconds() {
+        return switch (this) {
+            case ONE_MINUTE -> 60L;
+            case FIVE_MINUTES -> 300L;
+            case FIFTEEN_MINUTES -> 900L;
+            case THIRTY_MINUTES -> 1800L;
+            case ONE_HOUR -> 3600L;
+            case FOUR_HOURS -> 14400L;
+            case ONE_DAY -> 86400L;
+            case ONE_WEEK -> 604800L;
+        };
+    }
 }
