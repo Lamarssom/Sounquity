@@ -2,6 +2,7 @@ package com.musicinvestment.musicapp.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
@@ -44,13 +45,28 @@ public class Trade {
     @Column(name = "tx_hash")
     private String txHash;
 
-    @Column(name = "amount_in_usd")
-    private Double amountInUsd;
+    @Column(name = "amount_in_usd", precision = 20, scale = 10)
+    private BigDecimal amountInUsd;
 
-    @Column(name = "price_in_usd")
-    private Double priceInUsd;
+    @Column(name = "price_in_usd", precision = 20, scale = 10)
+    private BigDecimal priceInUsd;
 
     public enum EventType {
         BUY, SELL
+    }
+
+    // Validation in setters
+    public void setAmount(BigInteger amount) {
+        if (amount == null || amount.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative or null");
+        }
+        this.amount = amount;
+    }
+
+    public void setEthValue(BigInteger ethValue) {
+        if (ethValue == null || ethValue.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("EthValue cannot be negative or null");
+        }
+        this.ethValue = ethValue;
     }
 }
