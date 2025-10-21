@@ -3,6 +3,7 @@ package com.musicinvestment.musicapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.math.BigDecimal;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -49,7 +50,6 @@ public class Artist {
     @Column(length = 1000)
     private String description;
 
-    // >>> New fields for price chart and trading data
     @Column(nullable = true)
     private Double currentPrice;
 
@@ -64,6 +64,12 @@ public class Artist {
 
     @Column(nullable = true)
     private Integer airdropSupply;
+
+    @Column(name = "daily_liquidity", nullable = true)
+    private BigDecimal dailyLiquidity;
+
+    @Column(name = "curve_complete", nullable = true)
+    private Boolean curveComplete;
 
     // Constructor without description
     public Artist(String id, String name, String spotifyUrl, int followers, int popularity, String imageUrl, String contractAddress) {
