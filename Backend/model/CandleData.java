@@ -31,27 +31,28 @@ public class CandleData {
     private LocalDateTime timestamp;
 
     @NotNull
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 20, scale = 10)
     private BigDecimal open;
 
     @NotNull
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 20, scale = 10)
     private BigDecimal high;
 
     @NotNull
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 20, scale = 10)
     private BigDecimal low;
 
     @NotNull
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 20, scale = 10)
     private BigDecimal close;
 
     @NotNull
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 38, scale = 18)
     private BigDecimal volume;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "last_event_type", nullable = true)
-    private String lastEventType;
+    private Trade.EventType lastEventType;
 
     // Constructors
     public CandleData() {}
@@ -69,8 +70,8 @@ public class CandleData {
     }
 
     // Getters and Setters
-    public String getLastEventType() { return lastEventType; }
-    public void setLastEventType(String lastEventType) { this.lastEventType = lastEventType; }
+    public Trade.EventType getLastEventType() { return lastEventType; }
+    public void setLastEventType(Trade.EventType lastEventType) { this.lastEventType = lastEventType; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getArtistId() { return artistId; }
