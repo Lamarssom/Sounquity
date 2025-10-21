@@ -8,12 +8,14 @@ import com.musicinvestment.musicapp.model.Timeframe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.web3j.tuples.generated.Tuple6;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class SyncService {
@@ -23,6 +25,8 @@ public class SyncService {
     private final CandleDataService candleDataService;
     private final SpotifyService spotifyService;
     private final ContractService contractService;
+
+    private static final Logger logger = LoggerFactory.getLogger(SyncService.class);
 
     @Autowired
     public SyncService(ArtistService artistService, BlockchainSyncService blockchainSyncService,
@@ -43,57 +47,42 @@ public class SyncService {
                 String artistId = artist.getId();
                 String contractAddress = artist.getContractAddress();
                 if (contractAddress == null || contractAddress.equals("0x0000000000000000000000000000000000000000")) {
-                    System.out.println("Skipping sync for artistId " + artistId + ": No valid contract address");
+                    logger.info("Skipping sync for artistId {}: No valid contract address", artistId);
                     continue;
                 }
 
-                // Update price and volume
-                BigDecimal currentPrice = blockchainSyncService.getCurrentPriceRaw(artistId);
-                BigDecimal totalVolume = blockchainSyncService.getTotalVolumeTradedRaw(artistId);
+                ArtistSharesToken token = contractService.loadTokenContract(contractAddress);
+                BigDecimal currentPrice = contractService.getCurrentPriceRaw(artistId);
+                BigDecimal totalVolume = contractService.getTotalVolumeTradedRaw(artistId);
+                BigInteger dailySellLimitUsd;
+                boolean curveComplete;
+
+                try {
+                    dailySellLimitUsd = token.dailySellLimitUsd().send();
+                    curveComplete = token.curveComplete().send();
+                } catch (Exception e) {
+                    logger.warn("Failed to fetch dailySellLimitUsd or curveComplete for artistId {}, assuming defaults: {}", artistId, e.getMessage());
+                    dailySellLimitUsd = BigInteger.valueOf(50_000).multiply(BigInteger.TEN.pow(8));
+                    curveComplete = false;
+                }
+
                 if (currentPrice.equals(BigDecimal.ZERO) || totalVolume.equals(BigDecimal.ZERO)) {
-                    System.out.println("Skipping sync for artistId " + artistId + ": Invalid price or volume");
+                    logger.warn("Skipping sync for artistId {}: Invalid price or volume", artistId);
                     continue;
                 }
 
                 artist.setCurrentPrice(currentPrice.doubleValue());
                 artist.setTotalVolume(totalVolume.intValue());
+                artist.setDailyLiquidity(new BigDecimal(dailySellLimitUsd).divide(new BigDecimal("100000000"), 2, RoundingMode.HALF_UP));
+                artist.setCurveComplete(curveComplete);
+
                 artistService.updateArtistInfo(artistId, ArtistSharesDto.fromArtist(artist));
 
-                // Fetch and save candle data for all timeframes
-                ArtistSharesToken token = contractService.loadTokenContract(contractAddress);
-                long[] timeframes = {60, 300, 900, 3600, 14400, 86400}; // 1m, 5m, 15m, 1h, 4h, 1D
-                Timeframe[] timeframeEnums = {
-                    Timeframe.ONE_MINUTE,
-                    Timeframe.FIVE_MINUTES,
-                    Timeframe.FIFTEEN_MINUTES,
-                    Timeframe.ONE_HOUR,
-                    Timeframe.FOUR_HOURS,
-                    Timeframe.ONE_DAY
-                };
-
-                for (int i = 0; i < timeframes.length; i++) {
-                    long timeframe = timeframes[i];
-                    Timeframe timeframeEnum = timeframeEnums[i];
-                    Tuple6<List<BigInteger>, List<BigInteger>, List<BigInteger>, List<BigInteger>, List<BigInteger>, List<BigInteger>> candleHistory =
-                        token.getCandleHistory(BigInteger.valueOf(timeframe)).send();
-                    if (!candleHistory.component1().isEmpty()) {
-                        // Use the latest candle
-                        CandleData candleData = new CandleData();
-                        candleData.setArtistId(artistId);
-                        candleData.setTimeframe(timeframeEnum);
-                        candleData.setTimestamp(LocalDateTime.now());
-                        candleData.setOpen(new BigDecimal(candleHistory.component1().get(0)).divide(new BigDecimal("100000000")));
-                        candleData.setHigh(new BigDecimal(candleHistory.component2().get(0)).divide(new BigDecimal("100000000")));
-                        candleData.setLow(new BigDecimal(candleHistory.component3().get(0)).divide(new BigDecimal("100000000")));
-                        candleData.setClose(new BigDecimal(candleHistory.component4().get(0)).divide(new BigDecimal("100000000")));
-                        candleData.setVolume(new BigDecimal(candleHistory.component5().get(0)));
-                        candleDataService.saveCandleData(candleData);
-                    }
-                }
+                logger.info("Sync completed for artist {}: price=${}, volume={}, dailySellLimitUsd=${}, curveComplete={}",
+                    artist.getName(), currentPrice, totalVolume, dailySellLimitUsd, curveComplete);
             }
         } catch (Exception e) {
-            System.err.println("Blockchain sync error: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Blockchain sync error: {}", e.getMessage(), e);
         }
     }
 
@@ -109,8 +98,7 @@ public class SyncService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Spotify sync error: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Spotify sync error: {}", e.getMessage(), e);
         }
     }
 }
