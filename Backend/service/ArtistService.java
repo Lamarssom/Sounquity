@@ -29,27 +29,24 @@ public class ArtistService {
     public Optional<Artist> getArtistById(String id) {
         logger.info("Received ID to fetch artist: {}", id);
 
-        // First try to find by ID
         Optional<Artist> existingArtist = artistRepository.findById(id);
         if (existingArtist.isPresent()) {
             logger.info("Artist found by ID: {}", existingArtist.get().getName());
             return existingArtist;
         }
 
-        // Try finding by contract address
         Optional<Artist> byContract = artistRepository.findByContractAddress(id);
         if (byContract.isPresent()) {
             logger.info("Artist found by contract address: {}", byContract.get().getName());
             return byContract;
         }
 
-        // Fallback to Spotify fetch
         logger.info("Artist not found locally. Attempting Spotify fetch for ID: {}", id);
         try {
             Artist artist = spotifyService.getArtistById(id);
             if (artist == null) {
                 logger.warn("Artist not found on Spotify: {}", id);
-                return Optional.empty(); // Return empty to avoid placeholder
+                return Optional.empty();
             }
             logger.info("Artist fetched from Spotify: {} - {}", artist.getId(), artist.getName());
             return Optional.of(artistRepository.save(artist));
