@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 import { useAppKitAccount } from '@reown/appkit/react';
+import { FACTORY_CONTRACT_ADDRESS } from "../utilities/config.js";
 
 Modal.setAppElement('#root');
 
@@ -35,7 +36,7 @@ const ConnectWallet = () => {
   const modalRef = useRef(null);
 
   const web3 = useMemo(() => getWeb3(), []);
-  const factoryAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+  const factoryAddress = FACTORY_CONTRACT_ADDRESS;
   const factoryContract = useMemo(() => {
     return new web3.eth.Contract(ArtistSharesFactory.abi, factoryAddress);
   }, [web3]);
