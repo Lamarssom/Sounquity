@@ -34,12 +34,11 @@ export const getPlatformAddress = async () => {
 };
 
 // --- 2. Create new artist token ---
-export const createArtistTokenOnFactory = async (artistId, name, symbol, popularity) => {
+export const createArtistTokenOnFactory = async (artistId, name, symbol) => {
   try {
     const web3 = getWeb3Instance();
     let accounts = await web3.eth.getAccounts();
 
-    // Prompt MetaMask connection if no accounts
     if (!accounts || accounts.length === 0) {
       await window.ethereum.request({ method: "eth_requestAccounts" });
       accounts = await web3.eth.getAccounts();
@@ -48,7 +47,6 @@ export const createArtistTokenOnFactory = async (artistId, name, symbol, popular
     const userAddress = accounts[0];
     const factoryContract = new web3.eth.Contract(factoryAbi, FACTORY_CONTRACT_ADDRESS);
 
-    // Validate inputs
     if (!artistId || typeof artistId !== "string" || artistId.trim() === "") {
       throw new Error("Invalid artistId");
     }
@@ -58,28 +56,22 @@ export const createArtistTokenOnFactory = async (artistId, name, symbol, popular
     if (!symbol || typeof symbol !== "string" || symbol.trim() === "") {
       throw new Error("Invalid symbol");
     }
-    if (popularity === undefined || popularity === null || typeof popularity !== "number" || popularity < 0 || popularity > 100) {
-      console.warn("[createArtistTokenOnFactory] Invalid popularity, defaulting to 0");
-      popularity = 0;
-    }
 
-    console.log(`[createArtistTokenOnFactory] Creating token for artist ${artistId} - ${name} with symbol ${symbol} and popularity ${popularity}`);
+    console.log(`[createArtistTokenOnFactory] Creating token for artist ${artistId} - ${name} with symbol ${symbol}`);
 
     const teamWallet = userAddress;
     const tx = await factoryContract.methods
-      .createArtistToken(artistId, name, symbol, teamWallet, popularity)
+      .createArtistToken(artistId, name, symbol, teamWallet)
       .send({ from: userAddress });
 
     console.log("[createArtistTokenOnFactory] Transaction result:", tx);
 
-    // Extract token address from event
     const deployedAddress = tx.events?.ArtistTokenCreated?.returnValues?.tokenAddress;
     if (deployedAddress && deployedAddress !== "0x0000000000000000000000000000000000000000") {
       console.log("[createArtistTokenOnFactory] Deployed address:", deployedAddress);
       return deployedAddress;
     }
 
-    // Fallback: Query the contract
     const fallbackAddress = await factoryContract.methods.getTokenByArtistId(artistId).call();
     if (fallbackAddress && fallbackAddress !== "0x0000000000000000000000000000000000000000") {
       console.log("[createArtistTokenOnFactory] Fallback address:", fallbackAddress);
