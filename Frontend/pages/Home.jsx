@@ -7,6 +7,7 @@ import axios from "axios";
 import { getWeb3 } from "../utilities/web3.js";
 import ArtistSharesFactory from "../abis/ArtistSharesFactory.json";
 import { useBatchArtistFinancials } from "../hooks/useArtistFinancials";
+import { FACTORY_CONTRACT_ADDRESS } from "../utilities/config.js";
 
 const Home = ({ message }) => {
   const [artists, setArtists] = useState([]);
@@ -16,7 +17,7 @@ const Home = ({ message }) => {
   const navigate = useNavigate();
 
   const web3 = useMemo(() => getWeb3(), []);
-  const factoryAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+  const factoryAddress = FACTORY_CONTRACT_ADDRESS;
 
   const factoryContract = useMemo(() => {
     return new web3.eth.Contract(ArtistSharesFactory.abi, factoryAddress);
