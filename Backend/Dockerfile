@@ -8,6 +8,6 @@ RUN mvn clean package -DskipTests
 # Stage 2: Run the JAR with Java
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
-COPY --from=build /app/target/musicapp-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar   # instead of exact version
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
