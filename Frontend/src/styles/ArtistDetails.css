@@ -1,0 +1,561 @@
+/* src/styles/ArtistDetails.css */
+.artist-details {
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(180deg, var(--sounquity-dark), #2a2a3e);
+  color: var(--sounquity-text);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-glass {
+  background: rgba(45, 45, 45, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--sounquity-yellow);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+
+.card-glass:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.chart-card-body {
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  flex-direction: column;
+}
+
+.chart-inner-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  flex-grow: 1;
+}
+
+.artist-info-card {
+  height: auto;
+}
+
+.transactions-card-body {
+  padding: 12px;
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+  overflow-y: auto;
+}
+
+/* Ensure both cards in the second row have equal height */
+.row.g-3.mt-3 .card-glass {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.row.g-3.mt-3 .card-glass .card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Artist Info */
+.artist-header-clean {
+  margin-bottom: 20px;
+}
+
+.artist-name-yellow {
+  color: var(--sounquity-yellow);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.symbol-copy-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.artist-symbol-final {
+  color: var(--sounquity-yellow);
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* GOLDEN, ALWAYS VISIBLE, PREMIUM COPY ICON */
+.btn-copy-golden {
+  background: none;
+  border: none;
+  color: var(--sounquity-yellow) !important;
+  font-size: 1.25rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
+}
+
+.btn-copy-golden:hover {
+  background: rgba(255, 215, 0, 0.25);
+  transform: scale(1.25);
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+}
+
+.btn-copy-golden:active {
+  transform: scale(1.1);
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .artist-name-yellow { font-size: 1.5rem; }
+  .symbol-copy-row { font-size: 1.1rem; gap: 10px; }
+  .btn-copy-golden { font-size: 1.15rem; }
+}
+
+.artist-info-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  padding: 12px;
+}
+
+.artist-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--sounquity-green);
+}
+
+.artist-metrics {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.artist-metrics h4 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: var(--sounquity-yellow);
+}
+
+.artist-metrics p {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--sounquity-text);
+}
+
+.artist-metrics .row {
+  margin-bottom: 10px;
+}
+
+.spotify-link {
+  color: var(--sounquity-green);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.spotify-link:hover {
+  text-decoration: underline;
+  color: var(--sounquity-yellow);
+}
+
+/* Trade Controls */
+/* === FORCE GOLDEN LABELS FOR TRADE FORM === */
+.trade-controls .form-label,
+.trade-controls Form.Label,
+.trade-controls label {
+  color: var(--sounquity-yellow) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+  opacity: 1 !important;
+  font-size: 0.95rem;
+}
+
+/* Optional: Make them even brighter on focus/hover */
+.trade-controls .form-control:focus + .form-label,
+.trade-controls .form-label:hover {
+  color: #ffd700 !important;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.trade-controls {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.trade-controls .form-group {
+  max-width: 100%;
+}
+
+.trade-controls .form-control {
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
+  border: 1px solid var(--sounquity-yellow);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.trade-controls .form-control:focus {
+  border-color: var(--sounquity-green);
+  box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+}
+
+.trade-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.trade-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.btn-outline-light {
+  border-color: var(--sounquity-yellow);
+  color: var(--sounquity-yellow);
+}
+
+.btn-outline-light:hover {
+  background: var(--sounquity-yellow);
+  color: var(--sounquity-dark);
+}
+
+.btn-gradient {
+  background: linear-gradient(to right, var(--sounquity-yellow), var(--sounquity-green));
+  color: var(--sounquity-dark);
+  border: none;
+}
+
+.btn-danger {
+  background: linear-gradient(to right, #ff4d4d, #ff1a1a);
+  border: none;
+  color: var(--sounquity-text);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(to right, #ff1a1a, #ff4d4d);
+}
+
+/* Estimated Shares Text – Golden & Visible */
+.estimated-shares {
+  color: var(--sounquity-yellow) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-top: 4px;
+  opacity: 1 !important;
+  text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);
+  transition: color 0.2s ease;
+}
+
+.estimated-shares.loading {
+  color: var(--sounquity-green) !important;
+  font-style: italic;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Progress Bar */
+.progress-sm {
+  height: 1.2rem;
+  font-size: 0.8rem;
+  line-height: 1.8rem;
+}
+
+.progress-bar {
+  background-color: var(--sounquity-green);
+}
+
+.progress-bar.bg-warning {
+  background-color: var(--sounquity-yellow);
+}
+
+/* Chart */
+.chart-wrapper {
+  width: 100%;
+  max-width: 100%;
+  background: var(--sounquity-card);
+  border: 1px solid var(--sounquity-yellow);
+  border-radius: 8px;
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-controls {
+  padding: 8px;
+  background: var(--sounquity-card);
+  border-bottom: 1px solid var(--sounquity-yellow);
+  overflow-x: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chart-controls button,
+.chart-controls .chart-control-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  border: 1px solid var(--sounquity-yellow);
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chart-controls button.active,
+.chart-controls .chart-control-btn.active {
+  background: var(--sounquity-green);
+  border-color: var(--sounquity-green);
+  color: var(--sounquity-dark);
+}
+
+.chart-controls .chart-control-input {
+  width: 60px;
+  padding: 4px;
+  font-size: 11px;
+  border-radius: 4px;
+  border: 1px solid var(--sounquity-yellow);
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
+}
+
+.chart-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  min-width: 100px;
+  flex-grow: 1;
+}
+
+.chart-footer {
+  padding: 8px;
+  font-size: 12px;
+  color: var(--sounquity-text);
+  text-align: center;
+  background: var(--sounquity-card);
+  border-top: 1px solid var(--sounquity-yellow);
+  flex-shrink: 0;
+}
+
+/* Transactions Table */
+.live-transactions {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.trade-table-container {
+  height: 100%;
+  min-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.trade-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--sounquity-text);
+}
+
+.trade-table th,
+.trade-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--sounquity-yellow);
+}
+
+.trade-table th {
+  background: var(--sounquity-card);
+  position: sticky;
+  top: 0;
+}
+
+.trade-table a {
+  color: var(--sounquity-green);
+  text-decoration: none;
+}
+
+.trade-table a:hover {
+  text-decoration: underline;
+  color: var(--sounquity-yellow);
+}
+
+.no-trades {
+  color: var(--sounquity-text);
+  text-align: center;
+  padding: 16px;
+  opacity: 0.7;
+}
+
+/* ChatBox */
+.chatbox {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--sounquity-card);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-height: 250px;
+}
+
+.messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  color: var(--sounquity-text);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  margin-right: -17px;
+  padding-right: 17px;
+}
+
+.message,
+.no-messages,
+.loading {
+  margin-bottom: 8px;
+  padding: 0 16px;
+  width: 100%;
+  word-wrap: break-word;
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.user {
+  font-weight: bold;
+  margin-right: 5px;
+  color: var(--sounquity-yellow);
+}
+
+.input-container {
+  display: flex;
+  padding: 8px;
+  background: var(--sounquity-card);
+  border-top: 1px solid var(--sounquity-yellow);
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .artist-details {
+    padding: 0;
+  }
+  .row {
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .col-md-8,
+  .col-md-4,
+  .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .chart-card {
+    min-height: 350px;
+  }
+  .chart-card-body {
+    min-height: 350px;
+  }
+  .chart-inner-wrapper {
+    min-height: 300px;
+  }
+  .chart-wrapper {
+    min-height: 300px;
+  }
+  .artist-info-body {
+    padding: 10px;
+  }
+  .artist-image img {
+    width: 80px;
+    height: 80px;
+  }
+  .artist-metrics h4 {
+    font-size: 1.2rem;
+  }
+  .artist-metrics p {
+    font-size: 12px;
+  }
+  .trade-btn {
+    min-width: 60px;
+    font-size: 12px;
+    padding: 6px;
+  }
+  .form-control {
+    max-width: 100%;
+    font-size: 12px;
+    padding: 6px;
+  }
+  .chart-controls button,
+  .chart-controls .chart-control-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+  .chart-controls .chart-control-input {
+    width: 50px;
+    padding: 3px;
+    font-size: 10px;
+  }
+  .trade-table-container,
+  .chatbox {
+    min-height: 200px;
+    height: 100%;
+  }
+}
+
+/* === SHARED GOLDEN LOADING SPINNER (same as Home.jsx) === */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--sounquity-dark), #2a2a3e);
+  color: var(--sounquity-text);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--sounquity-yellow);
+  border-top: 5px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

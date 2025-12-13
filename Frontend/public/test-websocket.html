@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Test</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+  <h1>WebSocket Test</h1>
+  <div id="output"></div>
+  <script>
+    const log = (message) => {
+      const output = document.getElementById('output');
+      const p = document.createElement('p');
+      p.textContent = message;
+      output.appendChild(p);
+    };
+
+    const sock = new SockJS('http://localhost:8080/ws');
+    const client = Stomp.over(sock);
+
+    client.connect({}, (frame) => {
+      log('Connected: ' + JSON.stringify(frame));
+      client.subscribe('/topic/trades/1Xyo4u8uXC1ZmMpatF05PJ', (message) => {
+        log('Received: ' + message.body);
+      });
+    }, (error) => {
+      log('Error: ' + error);
+    });
+
+    sock.onclose = (event) => {
+      log('WebSocket Closed: ' + (event.reason || 'No reason provided'));
+    };
+  </script>
+</body>
+</html>

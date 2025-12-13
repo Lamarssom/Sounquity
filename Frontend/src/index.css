@@ -1,0 +1,102 @@
+/* Import Bootstrap CSS */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Custom styles for Sounquity */
+:root {
+  --sounquity-yellow: #FFD700;
+  --sounquity-green: #22C55E;
+  --sounquity-dark: #1A1A1A;
+  --sounquity-card: #2D2D2D;
+  --sounquity-text: #E5E7EB;
+}
+
+body {
+  background-color: var(--sounquity-dark);
+  color: var(--sounquity-text);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* Gradient buttons */
+.btn-gradient {
+  background: linear-gradient(to right, var(--sounquity-yellow), var(--sounquity-green));
+  color: var(--sounquity-dark);
+  border: none;
+  border-radius: 50rem;
+  transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+  background: linear-gradient(to left, var(--sounquity-yellow), var(--sounquity-green));
+  color: var(--sounquity-dark);
+}
+
+/* Glassy cards */
+.card-glass {
+  background: rgba(45, 45, 45, 0.5);
+  backdrop-filter: blur(10px);
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card{
+  background: var(--sounquity-dark) !important;
+}
+.card-body{
+  background: var(--sounquity-dark) !important;
+}
+
+.container, .container-fluid {
+  background: var(--sounquity-dark) !important;
+}
+.card-glass:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/*Reset global scrollbar to prevent interference */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--sounquity-dark);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #6B7280;
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/*Golden scrollbars for artist details and LiveTransactions*/
+.card-glass::-webkit-scrollbar, .container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.card-glass::-webkit-scrollbar-track, .container::-webkit-scrollbar-track {
+  background: var(--sounquity-dark) !important;
+  border-radius: 8px;
+}
+
+.card-glass::-webkit-scrollbar-track, .container::-webkit-scrollbar-thumb {
+  background: var(--sounquity-yellow) !important;
+  border-radius: 8px;
+  border: 1px solid var(--sounquity-dark) !important;
+}
+
+.card-glass::-webkit-scrollbar-thumb:hover, .container:-webkit-scrollbar-thumb:hover {
+  background: var(--sounquity-green) !important;
+}
+
+.card-glass, .container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sounquity-yellow) var(--sounquity-dark) !important;
+}
+/* Custom input focus */
+.form-control:focus {
+  border-color: var(--sounquity-yellow);
+  box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+}

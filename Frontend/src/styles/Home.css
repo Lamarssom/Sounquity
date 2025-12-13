@@ -1,0 +1,121 @@
+/* src/styles/Home.css */
+html, body, #root {
+  background: var(--sounquity-dark) !important;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  color: var(--sounquity-text);
+}
+
+.home-container {
+  padding: 40px 32px;
+  background: linear-gradient(180deg, var(--sounquity-dark), #2a2a3e);
+  min-height: 100vh;
+  height: 100vh;
+  color: var(--sounquity-text);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-container h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--sounquity-yellow);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.home-container p {
+  font-size: 18px;
+  color: var(--sounquity-text);
+  margin-bottom: 30px;
+}
+
+.artist-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.feature-container {
+  margin-top: 60px;
+  padding: 20px;
+  background: var(--sounquity-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.feature-container h2 {
+  font-size: 28px;
+  color: var(--sounquity-green);
+  margin-bottom: 16px;
+}
+
+.feature-container p {
+  font-size: 16px;
+  color: var(--sounquity-text);
+}
+
+.footer {
+  margin-top: 80px;
+  font-size: 14px;
+  color: var(--sounquity-text);
+  opacity: 0.7;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--sounquity-dark), #2a2a3e);
+  color: var(--sounquity-text);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--sounquity-yellow);
+  border-top: 5px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #ff4d4d;
+  font-size: 18px;
+  background: linear-gradient(180deg, var(--sounquity-dark), #2a2a3e);
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 20px 16px;
+  }
+
+  .home-container h1 {
+    font-size: 28px;
+  }
+
+  .artist-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .feature-container {
+    margin-top: 40px;
+  }
+}

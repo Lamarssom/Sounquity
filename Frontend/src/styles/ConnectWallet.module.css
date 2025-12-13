@@ -1,0 +1,243 @@
+.walletContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.connected {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account {
+  color: var(--sounquity-text);
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--sounquity-card);
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
+.connectButton {
+  background: linear-gradient(90deg, var(--sounquity-yellow), var(--sounquity-green));
+  color: var(--sounquity-dark);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.connectButton:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.connectButton.disabled {
+  background: var(--sounquity-card);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.disconnectButton {
+  background: linear-gradient(90deg, #ff4d4d, #ff1a1a);
+  color: var(--sounquity-text);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.disconnectButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--sounquity-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  min-width: 200px;
+  margin-top: 8px;
+}
+
+.dropdownItem {
+  background: none;
+  color: var(--sounquity-text);
+  padding: 10px 16px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.modal {
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  margin: 50px auto;
+  outline: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2000;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+}
+
+.overlay.active {
+  pointer-events: none;
+}
+
+.modalTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sounquity-yellow);
+  margin-bottom: 16px;
+}
+
+.modalSubtitle {
+  font-size: 16px;
+  color: var(--sounquity-text);
+  opacity: 0.8;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 11;
+}
+
+.artistList {
+  background: var(--sounquity-card);
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 16px;
+  padding: 8px 0;
+  position: relative;
+  width: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 8;
+}
+
+.artistListItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.artistListItem:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.artistListItem.selected {
+  background: var(--sounquity-green);
+  color: var(--sounquity-dark);
+}
+
+.artistListContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.artistListImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.loading {
+  color: var(--sounquity-text);
+  font-size: 14px;
+  text-align: center;
+}
+
+.noResults {
+  color: var(--sounquity-text);
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.error {
+  color: #ff4d4d;
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.modalActions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelButton {
+  background: var(--sounquity-card);
+  color: var(--sounquity-text);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.cancelButton:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.disabled {
+  background: var(--sounquity-card);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.signingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  border-radius: 16px;
+  color: var(--sounquity-text);
+  font-size: 16px;
+  gap: 10px;
+}

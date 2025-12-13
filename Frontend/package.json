@@ -1,0 +1,92 @@
+{
+  "name": "music-investment-frontend",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@headlessui/react": "^2.2.9",
+    "@reown/appkit": "^1.8.4",
+    "@reown/appkit-adapter-wagmi": "^1.8.4",
+    "@stomp/stompjs": "^7.2.0",
+    "@tabler/core": "^1.3.2",
+    "@tabler/icons-react": "^3.34.0",
+    "@tanstack/react-query": "^5.85.6",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^13.5.0",
+    "ajv": "^8.17.1",
+    "ajv-keywords": "^5.1.0",
+    "axios": "^1.7.7",
+    "bignumber.js": "^9.3.1",
+    "bn.js": "^5.2.2",
+    "bootstrap": "^5.3.7",
+    "chart.js": "^4.4.9",
+    "clsx": "^2.1.1",
+    "dotenv": "^17.2.1",
+    "framer-motion": "^12.23.22",
+    "jwt-decode": "^4.0.0",
+    "klinecharts": "^10.0.0-alpha5",
+    "lightweight-charts": "^3.8.0",
+    "lodash": "^4.17.21",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.10",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.5.0",
+    "react-lazy-load-image-component": "^1.6.3",
+    "react-modal": "^3.16.3",
+    "react-router-dom": "^6.26.2",
+    "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
+    "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.1",
+    "sockjs-client": "^1.6.1",
+    "typescript": "^5.5.4",
+    "viem": "^2.37.5",
+    "wagmi": "^2.16.9",
+    "web-vitals": "^2.1.4",
+    "web3": "^4.5.0"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "cross-env NODE_ENV=production vite build",
+    "test": "vitest",
+    "preview": "vite preview"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2020": true
+    },
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@schemastore/package": "^0.0.10",
+    "@vitejs/plugin-react": "^4.3.2",
+    "cross-env": "^10.0.0",
+    "vite": "^5.4.8",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vitest": "^2.1.3"
+  },
+  "resolutions": {
+    "lit": "^3.3.0",
+    "eventemitter3": "^5.0.1"
+  }
+}
