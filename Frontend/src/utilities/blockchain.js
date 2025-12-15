@@ -12,7 +12,10 @@ const getWeb3Instance = () => {
   if (window.web3 && window.web3.currentProvider) {
     return new Web3(window.web3.currentProvider);
   }
-  throw new Error("Non-Ethereum browser detected. Please install MetaMask.");
+  
+  // Fallback: Use public RPC for read-only (no signing)
+  console.warn("No wallet detected. Using read-only public RPC.");
+  return new Web3(TESTNET_RPC_URL);  // or a fallback like "https://ethereum-sepolia-rpc.publicnode.com"
 };
 
 // Load the contract ABIs
@@ -38,6 +41,10 @@ export const createArtistTokenOnFactory = async (artistId, name, symbol) => {
   try {
     const web3 = getWeb3Instance();
     let accounts = await web3.eth.getAccounts();
+
+    if (!window.ethereum) {
+      throw new Error("Please install MetaMask to create an artist token.");
+    }
 
     if (!accounts || accounts.length === 0) {
       await window.ethereum.request({ method: "eth_requestAccounts" });

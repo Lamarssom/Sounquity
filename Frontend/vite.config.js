@@ -9,7 +9,11 @@ export default defineConfig({
     commonjs({
       include: [/node_modules\/(web3|eventemitter3|@coinbase\/wallet-sdk)/],
       transformMixedEsModules: true,
-    }),
+      namedExports: {
+        // Add this block — fixes the default export issue
+        'node_modules/eventemitter3/index.js': ['EventEmitter'],
+      },
+    }),,
     nodePolyfills({
       globals: {
         events: true,
