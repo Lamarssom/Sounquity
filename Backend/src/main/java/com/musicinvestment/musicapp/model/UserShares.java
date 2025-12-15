@@ -9,7 +9,7 @@ public class UserShares {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
@@ -37,7 +37,7 @@ public class UserShares {
         this.askingPrice = null;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

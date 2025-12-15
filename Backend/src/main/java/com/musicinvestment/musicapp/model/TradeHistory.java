@@ -10,7 +10,7 @@ public class TradeHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
@@ -44,7 +44,7 @@ public class TradeHistory {
     }
 
     // Getters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -73,7 +73,7 @@ public class TradeHistory {
     }
 
     // Setters
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
