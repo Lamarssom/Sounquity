@@ -73,7 +73,7 @@ public class TradeHistory {
     }
 
     // Setters
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
