@@ -113,7 +113,7 @@ public class BlockchainSyncService {
                 logger.info("Cleared cache: {}", cacheName);
             }
         });
-        if (devMode) {
+        /*if (devMode) {
             tradeRepository.deleteAll();
             candleDataRepository.deleteAll();
             chatMessageRepository.deleteAllInBatch();
@@ -122,7 +122,7 @@ public class BlockchainSyncService {
 
             artistRepository.clearAllContractAddresses();
             logger.info("Dev mode: Cleared all artist contract addresses from DB.");
-        }
+        }*/
         syncArtistContracts();
         if (!devMode) {
             try {
