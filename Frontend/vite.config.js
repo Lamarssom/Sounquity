@@ -1,10 +1,17 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
   plugins: [
     react(),
+    commonjs({
+      // Force named exports for eventemitter3 (this fixes the default import error)
+      namedExports: {
+        'node_modules/eventemitter3/index.js': ['EventEmitter'],
+      },
+    }),
     nodePolyfills({
       globals: {
         events: true,
@@ -12,15 +19,7 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
-    include: [
-      'eventemitter3',
-      'web3',
-      'wagmi',
-      '@walletconnect/sign-client',
-      '@walletconnect/utils',
-      '@coinbase/wallet-sdk',
-    ],
-    exclude: ['eventemitter3'], // Prevent pre-bundling the CJS version
+    include: ['eventemitter3', 'web3', 'wagmi', '@walletconnect/sign-client', '@walletconnect/utils', '@coinbase/wallet-sdk'],
     esbuildOptions: {
       target: 'esnext',
       supported: {
@@ -40,10 +39,8 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: [
-        'eventemitter3',           // Critical: leave as external import
-        '@coinbase/wallet-sdk',    // Also helps
-      ],
+      // Keep your existing external if needed, but eventemitter3 is now handled by commonjs plugin
+      external: ['@coinbase/wallet-sdk'], // optional, if it causes issues
       output: {
         manualChunks: {
           wagmi: ['wagmi', '@web3modal/wagmi', '@wagmi/connectors', '@wagmi/core'],
