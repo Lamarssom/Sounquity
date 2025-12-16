@@ -88,6 +88,6 @@
   },
   "resolutions": {
     "lit": "^3.3.0",
-    "eventemitter3": "^5.0.1"
+    "eventemitter3": "^4.0.7"
   }
 }
