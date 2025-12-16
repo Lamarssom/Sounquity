@@ -7,15 +7,10 @@ export default defineConfig({
   plugins: [
     react(),
     commonjs({
-      include: [/node_modules\/(web3|eventemitter3|@coinbase\/wallet-sdk | walletconnect)/],
+      filter: /node_modules\/(eventemitter3|web3|@coinbase\/wallet-sdk|walletconnect)/,
       transformMixedEsModules: true,
       defaultIsModuleExports: true,
-      namedExports: {
-        // Add this block — fixes the default export issue
-        'node_modules/eventemitter3/index.js': ['EventEmitter'],
-        'node_modules/eventemitter3/index.mjs': ['EventEmitter'],
-      },
-    }),,
+    }),
     nodePolyfills({
       globals: {
         events: true,
