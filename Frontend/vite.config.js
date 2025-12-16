@@ -12,6 +12,7 @@ export default defineConfig({
       namedExports: {
         // Add this block — fixes the default export issue
         'node_modules/eventemitter3/index.js': ['EventEmitter'],
+        'node_modules/eventemitter3/index.mjs': ['EventEmitter'],
       },
     }),,
     nodePolyfills({
