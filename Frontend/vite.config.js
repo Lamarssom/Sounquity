@@ -47,7 +47,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      external: ['@coinbase/wallet-sdk'],
+      external: ['eventemitter3', '@coinbase/wallet-sdk'],
       output: {
         manualChunks: {
           'wagmi': ['wagmi', '@web3modal/wagmi', '@wagmi/connectors', '@wagmi/core'],
