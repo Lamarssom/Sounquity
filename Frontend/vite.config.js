@@ -1,21 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import commonjs from 'vite-plugin-commonjs';
 
 export default defineConfig({
   plugins: [
     react(),
-    commonjs({
-      include: [/node_modules/],
-      transformMixedEsModules: true,
-      defaultIsModuleExports: true,
-      namedExports: {
-        'node_modules/eventemitter3/index.js': ['EventEmitter'],
-        'node_modules/web3/index.js': ['Web3'],
-        'node_modules/@coinbase/wallet-sdk/dist/index.js': ['CoinbaseWalletSDK'],
-      },
-    }),
     nodePolyfills({
       globals: {
         events: true,
@@ -23,7 +12,15 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
-    include: ['eventemitter3', 'web3', 'wagmi', '@walletconnect/sign-client', '@walletconnect/utils'],
+    include: [
+      'eventemitter3',
+      'web3',
+      'wagmi',
+      '@walletconnect/sign-client',
+      '@walletconnect/utils',
+      '@coinbase/wallet-sdk',
+    ],
+    exclude: ['eventemitter3'], // Prevent pre-bundling the CJS version
     esbuildOptions: {
       target: 'esnext',
       supported: {
@@ -42,19 +39,18 @@ export default defineConfig({
     },
   },
   build: {
-    commonjsOptions: {
-      include: [/node_modules\/(web3|eventemitter3|@coinbase\/wallet-sdk)/],
-      transformMixedEsModules: true,
-    },
     rollupOptions: {
-      external: ['eventemitter3', '@coinbase/wallet-sdk'],
+      external: [
+        'eventemitter3',           // Critical: leave as external import
+        '@coinbase/wallet-sdk',    // Also helps
+      ],
       output: {
         manualChunks: {
-          'wagmi': ['wagmi', '@web3modal/wagmi', '@wagmi/connectors', '@wagmi/core'],
-          'web3': ['web3'],
+          wagmi: ['wagmi', '@web3modal/wagmi', '@wagmi/connectors', '@wagmi/core'],
+          web3: ['web3'],
           'react-libs': ['react', 'react-dom', 'react-router-dom'],
-          'viem': ['viem'],
-          'charts': ['chart.js', 'react-chartjs-2', 'klinecharts', 'lightweight-charts'],
+          viem: ['viem'],
+          charts: ['chart.js', 'react-chartjs-2', 'klinecharts', 'lightweight-charts'],
         },
       },
       onLog(level, log, handler) {
