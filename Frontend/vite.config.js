@@ -1,17 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
   plugins: [
     react(),
-    commonjs({
-      // Force named exports for eventemitter3 (this fixes the default import error)
-      namedExports: {
-        'node_modules/eventemitter3/index.js': ['EventEmitter'],
-      },
-    }),
     nodePolyfills({
       globals: {
         events: true,
@@ -38,8 +31,11 @@ export default defineConfig({
     },
   },
   build: {
+    commonjsOptions: {
+      defaultIsModuleExports: 'auto',  // Key option for many "default not exported" issues
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
-      // Keep your existing external if needed, but eventemitter3 is now handled by commonjs plugin
       external: ['@coinbase/wallet-sdk'], // optional, if it causes issues
       output: {
         manualChunks: {
