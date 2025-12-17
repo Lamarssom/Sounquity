@@ -39,11 +39,12 @@ export default defineConfig({
       external: ['@coinbase/wallet-sdk'], // optional, if it causes issues
       output: {
         manualChunks: {
-          wagmi: ['wagmi', '@web3modal/wagmi', '@wagmi/connectors', '@wagmi/core'],
+          wagmi: ['wagmi', '@wagmi/connectors', '@wagmi/core'],
           web3: ['web3'],
           'react-libs': ['react', 'react-dom', 'react-router-dom'],
           viem: ['viem'],
           charts: ['chart.js', 'react-chartjs-2', 'klinecharts', 'lightweight-charts'],
+          appkit: ['@reown/appkit', '@reown/appkit-adapter-wagmi'],
         },
       },
       onLog(level, log, handler) {
