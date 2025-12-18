@@ -36,13 +36,13 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      external: ['@coinbase/wallet-sdk'], // optional, if it causes issues
+    //  external: ['@coinbase/wallet-sdk'], // optional, if it causes issues
       output: {
         manualChunks: {
-          wagmi: ['wagmi', '@wagmi/connectors', '@wagmi/core'],
+        //  wagmi: ['wagmi', '@wagmi/connectors', '@wagmi/core'],
           web3: ['web3'],
           'react-libs': ['react', 'react-dom', 'react-router-dom'],
-          viem: ['viem'],
+        //  viem: ['viem'],
           charts: ['chart.js', 'react-chartjs-2', 'klinecharts', 'lightweight-charts'],
           appkit: ['@reown/appkit', '@reown/appkit-adapter-wagmi'],
         },
