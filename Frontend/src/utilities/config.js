@@ -6,7 +6,7 @@ const LOCAL_CHAIN_ID = 31337;
 const TESTNET_FACTORY_ADDRESS = "0xE79d7Fe208E6ece678fb680377a7957Aa466a0f6";
 const TESTNET_CHAIN_ID = 11155111;
 const TESTNET_CHAIN_NAME = "sepolia";
-const TESTNET_RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
+const TESTNET_RPC_URL = "https://rpc-sepolia.rockx.com";
 const TESTNET_EXPLORER = "https://sepolia.etherscan.io";
 
 // Backend URL (use env var in production, fallback to localhost)

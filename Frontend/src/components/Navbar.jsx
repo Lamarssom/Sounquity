@@ -72,7 +72,6 @@ const Navbar = () => {
       </div>
       <div className={styles.links}>
         <Link to="/" className={styles.link}>Home</Link>
-        <Link to="/market" className={styles.link}>Market</Link>
 
         {/* ADMIN BUTTON — DISAPPEARS INSTANTLY ON DISCONNECT */}
         {isAdmin && (

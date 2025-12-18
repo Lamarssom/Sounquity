@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDisconnect, useSignMessage } from 'wagmi';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { getWeb3 } from '../utilities/web3.js';
+import { getPublicWeb3 } from '../utilities/web3.js';
 import { getAuthHeaders } from '../utilities/auth';
 import ArtistSharesFactory from '../abis/ArtistSharesFactory.json';
 import styles from '../styles/ConnectWallet.module.css';
@@ -35,7 +35,7 @@ const ConnectWallet = () => {
   const searchWrapperRef = useRef(null);
   const modalRef = useRef(null);
 
-  const web3 = useMemo(() => getWeb3(), []);
+  const web3 = useMemo(() => getPublicWeb3(), []);
   const factoryAddress = FACTORY_CONTRACT_ADDRESS;
   const factoryContract = useMemo(() => {
     return new web3.eth.Contract(ArtistSharesFactory.abi, factoryAddress);

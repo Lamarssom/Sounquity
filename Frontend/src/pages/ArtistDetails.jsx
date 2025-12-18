@@ -275,7 +275,7 @@ const ArtistDetails = () => {
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     let requestInProgress = false;
 
     const initWeb3 = async () => {
@@ -338,7 +338,7 @@ const ArtistDetails = () => {
         window.ethereum.removeListener("chainChanged", handleChainChanged);
       };
     }
-  }, []);
+  }, []);*/
 
   const updateContractAddress = async (artistId, contractAddress) => {
     try {

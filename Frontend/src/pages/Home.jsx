@@ -5,7 +5,7 @@ import ArtistCard from "../components/ArtistCard";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getAuthHeaders } from "../utilities/auth";
-import { getWeb3 } from "../utilities/web3.js";
+import { getPublicWeb3 } from "../utilities/web3.js";
 import ArtistSharesFactory from "../abis/ArtistSharesFactory.json";
 import { useBatchArtistFinancials } from "../hooks/useArtistFinancials";
 import { FACTORY_CONTRACT_ADDRESS } from "../utilities/config.js";
@@ -18,7 +18,7 @@ const Home = ({ message }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const web3 = useMemo(() => getWeb3(), []);
+  const web3 = useMemo(() => getPublicWeb3(), []);
   const factoryAddress = FACTORY_CONTRACT_ADDRESS;
 
   const factoryContract = useMemo(() => {
@@ -161,10 +161,6 @@ const Home = ({ message }) => {
       <div className="feature-container">
         <h2>Discover & Trade Shares in Your Favorite Artists</h2>
         <p>Explore trending artists and be a part of their journey!</p>
-      </div>
-
-      <div className="footer">
-        <p>Message from the backend: {message}</p>
       </div>
     </div>
   );
