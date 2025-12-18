@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/api"; // Adjust if needed
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api"; // Adjust if needed
 
 // Helper function to get JWT token from local storage
 const getAuthToken = () => {
@@ -155,53 +155,6 @@ export const getArtistStats = async (contractAddress) => {
     }
 };
 
-// Buy artist shares
-export const buyArtistShares = async (contractAddress, amount) => {
-    try {
-        const jwtToken = getAuthToken();
-        const response = await fetch(`${BASE_URL}/shares/${contractAddress}/buy`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${jwtToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ amount })
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to buy shares.");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error buying shares:", error);
-        return null;
-    }
-};
-
-// Sell artist shares
-export const sellArtistShares = async (contractAddress, amount) => {
-    try {
-        const jwtToken = getAuthToken();
-        const response = await fetch(`${BASE_URL}/shares/${contractAddress}/sell`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${jwtToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ amount })
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to sell shares.");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error selling shares:", error);
-        return null;
-    }
-};
 
 // Update artist market data
 export const updateArtistMarketData = async (artistId, artistDetails) => {   // ✅ use artistId instead of contractAddress

@@ -99,7 +99,7 @@ try {
     metadata: {
       name: 'Sounquity',
       description: 'Music investment dApp',
-      url: 'http://localhost:3000',
+      url: window.location.origin,
       icons: ['https://avatars.githubusercontent.com/u/37784886'],
     },
   });
