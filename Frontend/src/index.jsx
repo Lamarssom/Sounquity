@@ -74,8 +74,9 @@ async function testRpcConnection() {
   }
 }
 
-testRpcConnection();
-
+if (import.meta.env.DEV) {
+  testRpcConnection();
+}
 // console.log('Networks before WagmiAdapter:', JSON.stringify(networks, null, 2));
 
 let wagmiAdapter;
