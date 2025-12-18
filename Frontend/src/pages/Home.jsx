@@ -32,11 +32,10 @@ const Home = ({ message }) => {
     const fetchArtists = async () => {
       try {
         console.log("Fetching artists from /api/artists");
-        const response = await axios.get("http://localhost:8080/api/artists", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/artists`, {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // Include credentials for CORS
         });
         console.log("Received artists:", response.data);
 
@@ -93,7 +92,7 @@ const Home = ({ message }) => {
     try {
       console.log(`Searching artists with term: ${searchTerm}`);
       const response = await axios.get(
-        `http://localhost:8080/api/artists/search?name=${encodeURIComponent(searchTerm)}`,
+        `${import.meta.env.VITE_API_URL}/artists/search?name=${encodeURIComponent(searchTerm)}`,
         {
           headers: {
             "Content-Type": "application/json",

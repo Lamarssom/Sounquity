@@ -21,7 +21,7 @@ const SearchBar = ({ onSearch, isModal = false, onDeploy }) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/artists/search?name=${encodeURIComponent(query)}`,
+        `${import.meta.env.VITE_API_URL}/artists/search?name=${encodeURIComponent(query)}`,
         {
           headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {},
         }
