@@ -78,12 +78,28 @@
 
 /* Mobile: Slightly smaller but still epic */
 @media (max-width: 768px) {
-  .image-container {
-    width: 130px !important;
-    height: 130px !important;
+  .artist-card {
+    max-width: none; /* Allow full width */
   }
-  
+
+  .image-container {
+    width: 120px !important;  /* Slightly smaller than current 130px */
+    height: 120px !important;
+  }
+
   .artist-card .col-4 {
-    padding: 16px !important;
+    padding: 12px !important;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .image-container {
+    width: 100px !important;
+    height: 100px !important;
   }
 }

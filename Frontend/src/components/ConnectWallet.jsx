@@ -56,7 +56,7 @@ const ConnectWallet = () => {
             toast.info('Session expired. Please reconnect wallet.');
           } else {
             const response = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/users/details`,
+              `${import.meta.env.VITE_API_URL}/users/details`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             console.log('[ConnectWallet] Token valid, user details:', response.data);
@@ -114,8 +114,8 @@ const ConnectWallet = () => {
     try {
       setLoading(true);
       const url = query
-        ? `${import.meta.env.VITE_API_URL}/api/artists/search?name=${encodeURIComponent(query)}`
-        : `${import.meta.env.VITE_API_URL}/api/artists`;
+        ? `${import.meta.env.VITE_API_URL}/artists/search?name=${encodeURIComponent(query)}`
+        : `${import.meta.env.VITE_API_URL}/artists`;
       console.log('[ConnectWallet] Fetching artists from:', url);
       const response = await axios.get(url, { headers: getAuthHeaders() });
       const artistsWithContractAddress = await Promise.all(
@@ -194,7 +194,7 @@ const ConnectWallet = () => {
         };
         console.log('[ConnectWallet] Sending wallet-login request with payload:', payload);
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/users/wallet-login`,
+          `${import.meta.env.VITE_API_URL}/users/wallet-login`,
           payload,
           { headers: getAuthHeaders() }
         );

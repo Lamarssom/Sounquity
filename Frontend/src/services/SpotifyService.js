@@ -10,7 +10,7 @@ const SpotifyService = {
     const log = (...args) => isDev && console.log(...args);
     try {
       log(`[SpotifyService] Searching for artist: ${name}`);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/artists/search`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/artists/search`, {
         params: { name },
         headers: getAuthHeaders(),
       });
@@ -28,7 +28,7 @@ const SpotifyService = {
     const log = (...args) => isDev && console.log(...args);
     try {
       log(`[SpotifyService] Fetching artist details from backend for artistId: ${artistId}`);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/artists/${artistId}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/artists/${artistId}`, {
         headers: getAuthHeaders(),
       });
       log("[SpotifyService] Artist details from backend:", response.data);
@@ -45,7 +45,7 @@ const SpotifyService = {
     const log = (...args) => isDev && console.log(...args);
     try {
       log(`[SpotifyService] Fetching chart data for artistId: ${artistId}`);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/artists/${artistId}/chart`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/artists/${artistId}/chart`, {
         headers: getAuthHeaders(),
       });
       log("[SpotifyService] Chart data response:", response.data);
@@ -72,7 +72,7 @@ const SpotifyService = {
       for (let attempt = 0; attempt < retries; attempt++) {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/artists/spotify?link=https://open.spotify.com/artist/${artistId}`
+            `${import.meta.env.VITE_API_URL}/artists/spotify?link=https://open.spotify.com/artist/${artistId}`
           ); // No headers needed for public endpoint
           if (!response.data || Object.keys(response.data).length === 0) {
             throw new Error("Empty response from Spotify API");
@@ -105,7 +105,7 @@ const SpotifyService = {
     const log = (...args) => isDev && console.log(...args);
     try {
       log(`[SpotifyService] Fetching artist by contract: ${contractAddress}`);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/artists/by-contract/${contractAddress}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/artists/by-contract/${contractAddress}`, {
         headers: getAuthHeaders(),
       });
       log("[SpotifyService] Artist by contract response:", response.data);

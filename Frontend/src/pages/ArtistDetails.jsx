@@ -190,7 +190,7 @@ const ArtistDetails = () => {
         log("[ArtistDetails] Financials are N/A, attempting fallback fetch for artistId:", artistId);
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/blockchain/financials/${artistId}`,
+            `${import.meta.env.VITE_API_URL}/blockchain/financials/${artistId}`,
             { headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` } }
           );
           log("[ArtistDetails] Fallback financials fetched:", response.data);
@@ -343,7 +343,7 @@ const ArtistDetails = () => {
   const updateContractAddress = async (artistId, contractAddress) => {
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/artists/${artistId}/update-contract`,
+        `${import.meta.env.VITE_API_URL}/artists/${artistId}/update-contract`,
         { contractAddress },
         { headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` } }
       );
@@ -368,7 +368,7 @@ const ArtistDetails = () => {
         // 1. Try to get enriched data from our DB (image, etc.)
         let artistData = null;
         try {
-          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/artists/${artistId}`);
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/artists/${artistId}`);
           artistData = res.data;
         } catch (e) {
           console.warn("Artist not in our DB yet, falling back to Spotify");

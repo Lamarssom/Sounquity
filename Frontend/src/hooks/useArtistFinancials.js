@@ -3,13 +3,13 @@ import axios from 'axios';
 
 const fetchArtistFinancials = async (artistId) => {
   if (!artistId) throw new Error('Artist ID is required');
-  const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/blockchain/financials/${artistId}`);
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/blockchain/financials/${artistId}`);
   return response.data;
 };
 
 const fetchBatchFinancials = async (artistIds) => {
   if (!artistIds || artistIds.length === 0) return [];
-  const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/blockchain/batch-financials?artistIds=${artistIds.join(',')}`);
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/blockchain/batch-financials?artistIds=${artistIds.join(',')}`);
   return response.data;
 };
 

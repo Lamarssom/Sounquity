@@ -47,7 +47,7 @@ const generateSymbol = (name) => {
       const loadArtists = async () => {
         if (artists.length > 0) return;
         try {
-          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/artists`, {
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/artists`, {
             headers: getAuthHeaders(),
           });
           setArtists(res.data);
@@ -78,7 +78,7 @@ const generateSymbol = (name) => {
 
         const normalizedAddress = address.toLowerCase();
         await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/artists/${artistId}/contract`,
+          `${import.meta.env.VITE_API_URL}/artists/${artistId}/contract`,
           { contractAddress: normalizedAddress },
           { headers: getAuthHeaders() }
         ).then(res => {

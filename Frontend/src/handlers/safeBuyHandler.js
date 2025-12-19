@@ -122,7 +122,7 @@ export async function safeBuyHandler(web3, contractAddress, userAddress, dollarA
     let dailyTradeVolumeUsd = 0;
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/blockchain/financials/by-user/${userAddress}`,
+        `${import.meta.env.VITE_API_URL}/blockchain/financials/by-user/${userAddress}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` } }
       );
       dailyTradeVolumeUsd = Number(res.data) || 0;

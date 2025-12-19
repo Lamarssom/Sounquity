@@ -81,7 +81,7 @@ export async function safeSellHandler(web3, contractAddress, userAddress, dollar
     let dailyTradeVolumeUsd;
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/blockchain/financials/by-user/${userAddress}`,
+        `${import.meta.env.VITE_API_URL}/blockchain/financials/by-user/${userAddress}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` } }
       );
       dailyTradeVolumeUsd = BigInt(Math.floor(response.data * 1e8));
