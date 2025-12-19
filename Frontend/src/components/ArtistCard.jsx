@@ -31,7 +31,7 @@ const ArtistCard = ({ artist, onViewDetails }) => {
     const fetchFinancials = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/blockchain/financials/${artistId}`,
+          `${import.meta.env.VITE_API_URL}/blockchain/financials/${artistId}`,
           { headers: getAuthHeaders() }
         );
         setFinancials({
