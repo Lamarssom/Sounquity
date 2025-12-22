@@ -19,6 +19,7 @@ const queryClient = new QueryClient();
 const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || 'fdc3cab70cefe145c936846e77515e92';
 
 const networks = [
+  // Keep Hardhat for local dev if needed
   defineChain({
     id: 31337,
     caipNetworkId: 'eip155:31337',
@@ -30,29 +31,42 @@ const networks = [
       decimals: 18,
     },
     rpcUrls: {
-      default: {
-        http: ['http://127.0.0.1:8545'],
-      },
-      public: {
-        http: ['http://127.0.0.1:8545'],
-      },
+      default: { http: ['http://127.0.0.1:8545'] },
+      public: { http: ['http://127.0.0.1:8545'] },
     },
     blockExplorers: {
-      default: {
-        name: 'Hardhat Explorer',
-        url: 'http://localhost:8545',
-      },
+      default: { name: 'Hardhat Explorer', url: 'http://localhost:8545' },
     },
     contracts: {
-      multicall3: {
-        address: '0xca11bde05977b3631167028862be2a173976ca11',
-      },
+      multicall3: { address: '0xca11bde05977b3631167028862be2a173976ca11' },
     },
+  }),
+
+  // Add Sepolia (production chain)
+  defineChain({
+    id: 11155111,
+    caipNetworkId: 'eip155:11155111',
+    chainNamespace: 'eip155',
+    name: 'Sepolia',
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: { http: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://rpc.sepolia.org'] },
+      public: { http: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://rpc.sepolia.org'] },
+    }
+    blockExplorers: {
+      default: { name: 'Sepolia Etherscan', url: 'https://sepolia.etherscan.io' },
+    },
+    // Optional: Add multicall if needed
+    // contracts: { multicall3: { address: '0xca11bde05977b3631167028862be2a173976ca11' } },
   }),
 ];
 
 // Test RPC connection
-async function testRpcConnection() {
+/*async function testRpcConnection() {
   try {
     const response = await fetch('http://127.0.0.1:8545', {
       method: 'POST',
@@ -72,7 +86,7 @@ async function testRpcConnection() {
   } catch (error) {
     // console.error('Failed to connect to Hardhat RPC:', error);
   }
-}
+}*/
 
 if (import.meta.env.DEV) {
   testRpcConnection();
