@@ -56,7 +56,7 @@ const networks = [
     rpcUrls: {
       default: { http: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://rpc.sepolia.org'] },
       public: { http: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://rpc.sepolia.org'] },
-    }
+    },
     blockExplorers: {
       default: { name: 'Sepolia Etherscan', url: 'https://sepolia.etherscan.io' },
     },
