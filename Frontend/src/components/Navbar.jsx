@@ -6,8 +6,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import styles from "../styles/Navbar.module.css";
 
 const ADMIN_WALLETS = [
-  "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
-  "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "0xd427d6782F66C62a3992Ca4fA41fF3BBc13C8579",
 ];
 
 const getCurrentWallet = () => {
