@@ -24,45 +24,18 @@ const getCurrentWallet = () => {
 };
 
 const Navbar = () => {
+  const { address, isConnected } = useAppKitAccount();
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const checkAdminStatus = () => {
-    const wallet = getCurrentWallet();
-    const admin = wallet && ADMIN_WALLETS.map(a => a.toLowerCase()).includes(wallet);
-    setIsAdmin(admin);
-  };
-
+S
   useEffect(() => {
-    // Initial check
-    checkAdminStatus();
-
-    // Check every 2 seconds
-    const interval = setInterval(checkAdminStatus, 2000);
-
-    // Listen for disconnect from other tabs or manual clear
-    const handleStorageChange = (e) => {
-      if (e.key === "@appkit/identity_cache" || e.key === null) {
-        checkAdminStatus();
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    // Monkey-patch localStorage.removeItem to catch disconnect
-    const originalRemoveItem = localStorage.removeItem;
-    localStorage.removeItem = function(key) {
-      originalRemoveItem.apply(this, arguments);
-      if (key === "@appkit/identity_cache") {
-        setIsAdmin(false);
-      }
-    };
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("storage", handleStorageChange);
-      // Don't restore original if we don't have reference — safe to leave
-    };
-  }, []);
+    if (isConnected && address) {
+      const lowerAddress = address.toLowerCase();
+      const allowed = ADMIN_WALLETS.some(a => a.toLowerCase() === lowerAddress);
+      setIsAdmin(allowed);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [isConnected, address]);
 
   return (
     <nav className={styles.navbar}>

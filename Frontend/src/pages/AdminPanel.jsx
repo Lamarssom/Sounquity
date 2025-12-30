@@ -27,22 +27,22 @@ const generateSymbol = (name) => {
     const isAdmin = isConnected && address && ADMIN_WALLETS.includes(address.toLowerCase());
 
     useEffect(() => {
-      if (hasChecked.current) return; // ← PREVENT RE-RUN ON REFRESH
-      hasChecked.current = true;
-
       if (!isConnected) {
         toast.error("Please connect your wallet");
         navigate("/");
         return;
       }
 
-      if (!isAdmin) {
+      const lowerAddress = address?.toLowerCase();
+      const allowed = ADMIN_WALLETS.map(a => a.toLowerCase()).includes(lowerAddress);
+
+      if (!allowed) {
         toast.error("Unauthorized. Admin access only.");
         navigate("/");
         return;
       }
 
-      // Now safe to load artists
+      // User is connected and authorized → load artists
       const loadArtists = async () => {
         if (artists.length > 0) return;
         try {
@@ -58,7 +58,7 @@ const generateSymbol = (name) => {
       };
 
       loadArtists();
-    }, [isConnected, isAdmin, navigate]);
+    }, [isConnected, address, navigate]);
 
     const handleDeploy = async (artist) => {
       const artistId = artist.artistId || artist.spotifyId || artist.id || artist.Id;
