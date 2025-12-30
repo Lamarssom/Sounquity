@@ -1,5 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useEffect, useState } from "react";
+import { useAppKitAccount } from '@reown/appkit/react';
 import { Link } from "react-router-dom";
 import ConnectWallet from "./ConnectWallet";
 import ErrorBoundary from "./ErrorBoundary";
