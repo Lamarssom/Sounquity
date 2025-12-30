@@ -26,7 +26,7 @@ const getCurrentWallet = () => {
 const Navbar = () => {
   const { address, isConnected } = useAppKitAccount();
   const [isAdmin, setIsAdmin] = useState(false);
-S
+
   useEffect(() => {
     if (isConnected && address) {
       const lowerAddress = address.toLowerCase();
