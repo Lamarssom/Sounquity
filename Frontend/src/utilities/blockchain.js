@@ -37,6 +37,17 @@ export const createArtistTokenOnFactory = async (artistId, name, symbol) => {
 
     const factoryContract = new web3.eth.Contract(factoryAbi, FACTORY_CONTRACT_ADDRESS);
 
+    // NEW: Simulate the call to get revert reason without gas
+    try {
+      await factoryContract.methods
+        .createArtistToken(artistId.trim(), name.trim(), symbol.trim(), userAddress)
+        .call({ from: userAddress });
+      console.log("[Simulation] Success - no revert");
+    } catch (simError) {
+      console.error("[Simulation] Revert reason:", simError.message);
+      throw simError;  // Stop here if simulation fails
+    }
+
     const tx = await factoryContract.methods
       .createArtistToken(artistId.trim(), name.trim(), symbol.trim(), userAddress)
       .send({ from: userAddress });
