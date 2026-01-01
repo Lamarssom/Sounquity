@@ -3,7 +3,7 @@ const LOCAL_FACTORY_ADDRESS = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 const LOCAL_CHAIN_ID = 31337;
 
 // Sepolia Testnet (live demo)
-const TESTNET_FACTORY_ADDRESS = "0xE79d7Fe208E6ece678fb680377a7957Aa466a0f6";
+const TESTNET_FACTORY_ADDRESS = "0xf786D2cc893FD7ABd187a9A9f17BF2c9B273de0d";
 const TESTNET_CHAIN_ID = 11155111;
 const TESTNET_CHAIN_NAME = "sepolia";
 const TESTNET_RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";

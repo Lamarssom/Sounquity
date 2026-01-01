@@ -44,7 +44,9 @@ export const createArtistTokenOnFactory = async (artistId, name, symbol) => {
         .call({ from: userAddress });
       console.log("[Simulation] Success - no revert");
     } catch (simError) {
-      console.error("[Simulation] Revert reason:", simError.message);
+      console.error("[Simulation] Full revert error:", simError);
+      console.error("[Simulation] Revert data:", simError.data);
+      console.error("[Simulation] Revert reason:", simError.reason || simError.message);
       throw simError;  // Stop here if simulation fails
     }
 
