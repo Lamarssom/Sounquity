@@ -22,7 +22,7 @@ const ChatBox = ({ contractAddress, userId }) => {
       setError("Missing contract address");
       return;
     }
-    axios.get(`http://localhost:8080/api/artists/by-contract/${contractAddress}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/artists/by-contract/${contractAddress}`)
       .then(response => {
         if (response.data && response.data.artistId) {
           console.log("[ChatBox] Fetched artistId:", response.data.artistId); // Debug log
@@ -44,7 +44,7 @@ const ChatBox = ({ contractAddress, userId }) => {
   useEffect(() => {
     if (!artistId) return;
 
-    axios.get(`http://localhost:8080/api/messages?artistId=${artistId}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/messages?artistId=${artistId}`, {
       headers: getAuthHeaders()
     })
       .then(response => {
@@ -71,7 +71,7 @@ const ChatBox = ({ contractAddress, userId }) => {
     if (!artistId) return;
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws', null, {
+      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`, null, {
         transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
         timeout: 15000,
       }),
@@ -141,7 +141,7 @@ const ChatBox = ({ contractAddress, userId }) => {
 
     console.log("[ChatBox] Sending message payload:", message);
 
-    axios.post(`http://localhost:8080/api/messages`, message, {
+    axios.post(`${import.meta.env.VITE_API_URL}/messages`, message, {
       headers: getAuthHeaders()
     })
       .then(() => {

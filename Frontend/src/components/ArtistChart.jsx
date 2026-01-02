@@ -94,7 +94,7 @@ const ArtistChart = forwardRef(({ contractAddress, artistId, timeframe = '5m', r
     isMountedRef.current = true;
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws', null, {
+      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`, null, {
         transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
         timeout: 15000,
       }),

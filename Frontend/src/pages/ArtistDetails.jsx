@@ -71,9 +71,8 @@ const ArtistDetails = () => {
 
     console.log('[DEBUG WebSocket] Subscribing to /topic/financials/' + artistId);
 
-    const wsUrl = import.meta.env.VITE_API_URL 
-      ? import.meta.env.VITE_API_URL.replace(/^http/, 'ws') + '/ws'
-      : 'ws://localhost:8080/ws';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const wsUrl = baseUrl.replace(/^http/, 'ws') + '/ws';  // → wss://.../api/ws on prod
 
     const client = new Client({
       webSocketFactory: () => new SockJS(wsUrl),

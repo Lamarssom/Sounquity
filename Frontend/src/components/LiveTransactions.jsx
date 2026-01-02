@@ -23,7 +23,7 @@ const LiveTransactions = ({ contractAddress }) => {
       return;
     }
     // Fetch artistId from backend
-    axios.get(`http://localhost:8080/api/artists/by-contract/${contractAddress}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/artists/by-contract/${contractAddress}`)
       .then(response => {
         logger.info("LiveTransactions", `API Response for /api/artists/by-contract/${contractAddress}: ${JSON.stringify(response.data)}`);
         if (response.data && response.data.artistId) {
@@ -46,7 +46,7 @@ const LiveTransactions = ({ contractAddress }) => {
   useEffect(() => {
     if (!artistId) return;
 
-    axios.get(`http://localhost:8080/api/trades/artist/${artistId}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/trades/artist/${artistId}`, {
       headers: getAuthHeaders()
     })
       .then(response => {
@@ -81,7 +81,7 @@ const LiveTransactions = ({ contractAddress }) => {
     }
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws', null, {
+      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`, null, {
         transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
         timeout: 15000,
       }),
