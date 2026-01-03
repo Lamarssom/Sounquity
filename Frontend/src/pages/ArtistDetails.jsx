@@ -71,7 +71,7 @@ const ArtistDetails = () => {
 
     console.log('[DEBUG WebSocket] Subscribing to /topic/financials/' + artistId);
 
-    const baseUrlUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
     const sockJsUrl = baseUrl + '/ws';
 
 
