@@ -71,13 +71,12 @@ const ArtistDetails = () => {
 
     console.log('[DEBUG WebSocket] Subscribing to /topic/financials/' + artistId);
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-    const cleanUrl = apiUrl.endsWith('/api') ? apiUrl.slice(0, -4) : apiUrl;
-    const sockJsUrl = cleanUrl + '/ws';
+    const baseUrlUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const sockJsUrl = baseUrl + '/ws';
 
 
     const client = new Client({
-      webSocketFactory: () => new SockJS(wsUrl),
+      webSocketFactory: () => new SockJS(sockJsUrl),
       reconnectDelay: 5000,
     });
 

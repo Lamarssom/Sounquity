@@ -50,12 +50,8 @@ public class SecurityConfig {
             )
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
-                    // Allow public endpoints to proceed without rejecting anonymous access
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-                    response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-                    response.setHeader("Access-Control-Allow-Headers", "*");
-                    response.setHeader("Access-Control-Allow-Credentials", "true");
+                    response.setContentType("application/json");
                     response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + authException.getMessage() + "\"}");
                 })
             )
