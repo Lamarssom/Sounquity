@@ -81,10 +81,14 @@ const LiveTransactions = ({ contractAddress }) => {
     }
 
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`, null, {
-        transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
-        timeout: 15000,
-      }),
+      webSocketFactory: () => {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        const sockJsUrl = apiUrl.replace('/api', '') + '/ws';
+        return new SockJS(sockJsUrl, null, {
+          transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+          timeout: 15000,
+        });
+      },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
