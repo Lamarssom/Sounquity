@@ -51,10 +51,13 @@ const ArtistCard = ({ artist, onViewDetails }) => {
   useEffect(() => {
     if (!artistId) return;
 
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const sockJsUrl = apiUrl.replace('/api', '') + '/ws';
+
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      webSocketFactory: () => new SockJS(sockJsUrl),
       reconnectDelay: 5000,
-      debug: () => {}, // Silence debug spam
+      debug: () => {}, 
     });
 
     client.onConnect = () => {
