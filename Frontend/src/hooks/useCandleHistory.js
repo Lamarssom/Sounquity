@@ -32,7 +32,8 @@ export const useCandleHistory = (contractAddress, artistId, timeframe = "5m") =>
   const fetchCandles = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/artists/candleData?artistId=${artistId}&timeframe=${timeframe.toUpperCase()}`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${apiUrl}/artists/candleData?artistId=${artistId}&timeframe=${timeframe.toUpperCase()}`);
       if (!response.ok) throw new Error(`Failed to fetch candles: ${response.statusText}`);
       const data = await response.json();
       logger.info("Raw API candle:", {
