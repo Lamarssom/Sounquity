@@ -88,11 +88,11 @@ public class ArtistController {
     }
 
     @GetMapping("/by-contract/{contractAddress}")
-    public ArtistSharesDto getArtistByContractAddress(@PathVariable String contractAddress) {
+    public ResponseEntity<ArtistSharesDto> getArtistByContractAddress(@PathVariable String contractAddress) {
         logger.info("Fetching artist by contract address: {}", contractAddress);
         Optional<Artist> artistOptional = artistService.getArtistByContractAddress(contractAddress);
         if (artistOptional.isPresent()) {
-            return ArtistSharesDto.fromArtist(artistOptional.get());
+            return ResponseEntity.ok(ArtistSharesDto.fromArtist(artistOptional.get()));
         } else {
             logger.warn("Artist not found for contract address: {}", contractAddress);
             return ResponseEntity.notFound().build();
