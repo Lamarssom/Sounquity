@@ -95,7 +95,7 @@ public class ArtistController {
             return ArtistSharesDto.fromArtist(artistOptional.get());
         } else {
             logger.warn("Artist not found for contract address: {}", contractAddress);
-            throw new RuntimeException("Artist not found for contract: " + contractAddress);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -191,6 +191,9 @@ public class ArtistController {
     public ResponseEntity<List<CandleData>> getCandleData(
             @RequestParam String artistId,
             @RequestParam String timeframe) {
+        if (artistId == null || timeframe == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
         logger.info("Fetching candle data for artist ID: {}, timeframe: {}", artistId, timeframe);
         try {
             Timeframe tf = Timeframe.fromValue(timeframe.toUpperCase());

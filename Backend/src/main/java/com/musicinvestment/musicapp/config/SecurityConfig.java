@@ -33,7 +33,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/users/wallet-login", "/spotify/token", "/api/auth/refresh-token").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/artists").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/artists/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/artists/by-contract/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/artists/search").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/artists/spotify").permitAll()
