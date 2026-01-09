@@ -191,33 +191,32 @@ public class ArtistController {
     public ResponseEntity<List<CandleData>> getCandleData(
             @RequestParam String artistId,
             @RequestParam String timeframe) {
-        if (artistId == null || timeframe == null) {
-            return ResponseEntity.badRequest().body(null);
+        if (artistId == null || artistId.trim().isEmpty() || timeframe == null || timeframe.trim().isEmpty()) {
+            logger.warn("Invalid parameters for candleData: artistId={}, timeframe={}", artistId, timeframe);
+            return ResponseEntity.badRequest().body(List.of());  // empty list instead of null/500
         }
+
         logger.info("Fetching candle data for artist ID: {}, timeframe: {}", artistId, timeframe);
+        
         try {
             Timeframe tf = Timeframe.fromValue(timeframe.toUpperCase());
-            logger.info("Parsed timeframe: {}", tf);
             List<CandleData> candleData = candleDataService.getCandleDataByArtistIdAndTimeframe(artistId, tf);
             
-            // DEBUG: Log RAW precision
-            candleData.forEach(candle -> {
-                String spread = candle.getHigh().subtract(candle.getLow()).toPlainString();
-                logger.info("Candle OHLC RAW: O={}, H={}, L={}, C={}, SPREAD={}, VOL={}", 
-                    candle.getOpen().toPlainString(),
-                    candle.getHigh().toPlainString(),
-                    candle.getLow().toPlainString(),
-                    candle.getClose().toPlainString(),
-                    spread,
-                    candle.getVolume().toPlainString()
-                );
-            });
+            // If no data → return empty list instead of crashing
+            if (candleData == null) {
+                candleData = List.of();
+            }
             
             logger.info("Returning {} candles for artistId={}, timeframe={}", candleData.size(), artistId, timeframe);
             return ResponseEntity.ok(candleData);
+        } catch (IllegalArgumentException e) {
+            // Invalid timeframe
+            logger.warn("Invalid timeframe requested: {}", timeframe, e);
+            return ResponseEntity.badRequest().body(List.of());
         } catch (Exception e) {
-            logger.error("Error fetching candle data: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(null);
+            logger.error("Error fetching candle data for {} / {}: {}", artistId, timeframe, e.getMessage(), e);
+            // Return empty instead of 500 - frontend can show "no data yet"
+            return ResponseEntity.ok(List.of());
         }
     }
 

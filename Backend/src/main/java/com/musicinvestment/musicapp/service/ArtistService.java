@@ -95,7 +95,7 @@ public class ArtistService {
 
     public Optional<Artist> getArtistByContractAddress(String contractAddress) {
         logger.info("Fetching artist by contract address: {}", contractAddress);
-        return artistRepository.findByContractAddress(contractAddress);
+        return artistRepository.findByContractAddressIgnoreCase(contractAddress);
     }
 
     @Transactional
@@ -105,6 +105,8 @@ public class ArtistService {
         if (contractAddress == null || contractAddress.trim().isEmpty()) {
             throw new IllegalArgumentException("Contract address must not be empty or null.");
         }
+
+        contractAddress = contractAddress.toLowerCase();
 
         Artist artist = artistRepository.findById(artistId)
             .orElseThrow(() -> new RuntimeException("Artist not found with ID: " + artistId));

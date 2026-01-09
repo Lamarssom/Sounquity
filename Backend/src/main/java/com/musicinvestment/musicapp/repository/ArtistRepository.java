@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,4 +55,7 @@ public interface ArtistRepository extends JpaRepository<Artist, String> {
     @Transactional
     @Query("UPDATE Artist a SET a.contractAddress = NULL")
     void clearAllContractAddresses();
+
+    @Query("SELECT a FROM Artist a WHERE LOWER(a.contractAddress) = LOWER(:contractAddress)")
+    Optional<Artist> findByContractAddressIgnoreCase(@Param("contractAddress") String contractAddress);
 }
