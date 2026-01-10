@@ -278,70 +278,64 @@ const ArtistDetails = () => {
     }
   };
 
-  /*useEffect(() => {
-    let requestInProgress = false;
-
+  useEffect(() => {
     const initWeb3 = async () => {
-      if (!window.ethereum || !window.ethereum.request) {
+      if (!window.ethereum) {
         setMetaMaskAvailable(false);
+        toast.error("MetaMask (or compatible wallet) not detected. Please install one to trade.");
         setLoading(false);
-        console.error("[INIT] MetaMask not available.");
         return;
       }
 
       try {
-        if (!requestInProgress) {
-          requestInProgress = true;
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
+        // Request accounts (this prompts if not already connected)
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
 
-          if (!Array.isArray(accounts) || accounts.length === 0) {
-            console.warn("[INIT] No MetaMask accounts returned.");
-            return;
+        if (!accounts?.length) {
+          toast.warn("No accounts found. Please connect your wallet.");
+          return;
+        }
+
+        const injectedWeb3 = getWeb3();     // From your utilities/web3.js – assumes it uses window.ethereum
+        const readOnlyWeb3 = getHttpWeb3(); // Public RPC
+
+        setWalletWeb3(injectedWeb3);
+        setHttpWeb3(readOnlyWeb3);
+        setAccount(accounts[0]);
+
+        // Listen for account/chain changes
+        const handleAccountsChanged = (newAccounts) => {
+          if (newAccounts.length > 0) {
+            setAccount(newAccounts[0]);
+          } else {
+            setAccount(null);
+            toast.info("Wallet disconnected.");
           }
+        };
 
-          const injectedWeb3 = getWeb3();
-          const readOnlyWeb3 = getHttpWeb3();
-          setWalletWeb3(injectedWeb3);
-          setHttpWeb3(readOnlyWeb3);
-          setAccount(accounts[0]);
-        }
+        const handleChainChanged = () => window.location.reload();
+
+        window.ethereum.on("accountsChanged", handleAccountsChanged);
+        window.ethereum.on("chainChanged", handleChainChanged);
+
+        return () => {
+          window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+          window.ethereum.removeListener("chainChanged", handleChainChanged);
+        };
       } catch (err) {
-        if (err.message?.includes("JSON-RPC") || err.message?.includes("Internal error")) {
-          alert("MetaMask or network error. Please refresh and try again.");
+        console.error("Wallet connection failed:", err);
+        if (err.code === 4001) {
+          toast.info("Wallet connection rejected.");
+        } else {
+          toast.error("Failed to connect wallet. Please try again.");
         }
-        console.error("[INIT] Web3 initialization failed:", err);
       } finally {
-        requestInProgress = false;
+        setLoading(false);
       }
     };
 
     initWeb3();
-
-    if (window.ethereum?.on) {
-      const handleAccountsChanged = (accounts) => {
-        if (accounts.length > 0) {
-          setAccount(accounts[0]);
-          log("[WALLET] Switched to account:", accounts[0]);
-        } else {
-          log("[WALLET] No MetaMask accounts connected.");
-        }
-      };
-
-      const handleChainChanged = (_chainId) => {
-        window.location.reload();
-      };
-
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-      window.ethereum.on("chainChanged", handleChainChanged);
-
-      return () => {
-        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-        window.ethereum.removeListener("chainChanged", handleChainChanged);
-      };
-    }
-  }, []);*/
+  }, []);
 
   const updateContractAddress = async (artistId, contractAddress) => {
     try {
