@@ -4,7 +4,7 @@ import "../styles/ArtistDetails.css";
 import ChatBox from "../components/ChatBox";
 import ArtistChart from "../components/ArtistChart";
 import SpotifyService from "../services/SpotifyService";
-import { getHttpWeb3, getWeb3 } from "../utilities/web3";
+import { getHttpWeb3, getWalletWeb3 } from "../utilities/web3";
 import { getFactoryContract } from "../utilities/getFactoryContract";
 import { safeBuyHandler } from "../handlers/safeBuyHandler";
 import { safeSellHandler } from "../handlers/safeSellHandler";
@@ -296,7 +296,7 @@ const ArtistDetails = () => {
           return;
         }
 
-        const injectedWeb3 = getWeb3();     // From your utilities/web3.js – assumes it uses window.ethereum
+        const injectedWeb3 = getWalletWeb3();     // From your utilities/web3.js – assumes it uses window.ethereum
         const readOnlyWeb3 = getHttpWeb3(); // Public RPC
 
         setWalletWeb3(injectedWeb3);
