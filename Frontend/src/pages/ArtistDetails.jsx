@@ -431,26 +431,48 @@ const ArtistDetails = () => {
   };
 
   const handleBuy = async () => {
-    if (buying || !readyToTrade || !walletWeb3 || !resolvedAddress || !account) {
-      toast.error("Not ready to trade.");
+    if (buying) return;
+
+    // NEW: Early checks with toast (no wallet/account)
+    if (!metaMaskAvailable) {
+      toast.error("MetaMask (or compatible wallet) not detected. Install one to trade.");
+      return;
+    }
+
+    if (!account) {
+      toast.info("Connect your wallet to buy shares.");
+      // Optional: Auto-prompt connect if MetaMask exists
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          setAccount(accounts[0]);
+        } catch (err) {
+          toast.error("Wallet connection cancelled.");
+        }
+      }
+      return;
+    }
+
+    if (!readyToTrade || !walletWeb3 || !resolvedAddress) {
+      toast.error("Trading not ready yet. Try again in a moment.");
       return;
     }
 
     const dollarAmountNum = parseFloat(dollarAmount);
     const slippageNum = parseFloat(slippage);
-    if (isNaN(dollarAmountNum) || dollarAmountNum <= 0) return toast.error("Invalid amount");
+    if (isNaN(dollarAmountNum) || dollarAmountNum <= 0) return toast.error("Enter a valid amount");
     if (isNaN(slippageNum) || slippageNum < 0 || slippageNum > 100) return toast.error("Invalid slippage");
 
     setBuying(true);
-    toast.info("Estimating...");
+    toast.info("Estimating buy...");
 
     try {
       const result = await safeBuyHandler(walletWeb3, resolvedAddress, account, dollarAmountNum, slippageNum);
       if (!result.success) throw new Error(result.error);
 
       const contract = new walletWeb3.eth.Contract(ArtistSharesTokenABI, resolvedAddress);
-      const totalCostWei = result.totalCost;     // ← FULL WEI STRING
-      const minTokensOut = result.minTokensOut;  // ← FULL WEI STRING
+      const totalCostWei = result.totalCost;
+      const minTokensOut = result.minTokensOut;
 
       let gasLimit = 700_000;
       try {
@@ -478,19 +500,37 @@ const ArtistDetails = () => {
     }
   };
 
-    const onSellSuccess = async (tokensSold) => {
-      await queryClient.invalidateQueries({ queryKey: ['financials', artistId] });
-      toast.success(`Sold ${tokensSold.toLocaleString(undefined, { maximumFractionDigits: 2 })} shares!`);
-      triggerChartRefresh();
-    };
+  const onSellSuccess = async (tokensSold) => {
+    await queryClient.invalidateQueries({ queryKey: ['financials', artistId] });
+    toast.success(`Sold ${tokensSold.toLocaleString(undefined, { maximumFractionDigits: 2 })} shares!`);
+    triggerChartRefresh();
+  };
 
+  
   const handleSell = async () => {
-    if (selling) {
+    if (selling) return;
+
+    // NEW: Same early toast checks as buy
+    if (!metaMaskAvailable) {
+      toast.error("MetaMask not detected. Install one to trade.");
       return;
     }
 
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account) {
-      toast.error("Trading not ready. Please ensure account, wallet, and contract are connected.");
+    if (!account) {
+      toast.info("Connect your wallet to sell shares.");
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          setAccount(accounts[0]);
+        } catch (err) {
+          toast.error("Connection cancelled.");
+        }
+      }
+      return;
+    }
+
+    if (!readyToTrade || !walletWeb3 || !resolvedAddress) {
+      toast.error("Trading not ready. Try again.");
       return;
     }
 
@@ -501,23 +541,16 @@ const ArtistDetails = () => {
 
     const dollarAmountNum = parseFloat(dollarAmount);
     const slippageNum = parseFloat(slippage);
-    if (isNaN(dollarAmountNum) || dollarAmountNum <= 0) {
-      toast.error("Invalid dollar amount. Must be a positive number.");
-      return;
-    }
-    if (isNaN(slippageNum) || slippageNum < 0 || slippageNum > 100) {
-      toast.error("Invalid slippage percentage. Must be between 0 and 100.");
-      return;
-    }
+    if (isNaN(dollarAmountNum) || dollarAmountNum <= 0) return toast.error("Enter a valid amount");
+    if (isNaN(slippageNum) || slippageNum < 0 || slippageNum > 100) return toast.error("Invalid slippage");
 
     setSelling(true);
-    toast.info("Processing sell transaction...");
+    toast.info("Processing sell...");
 
     try {
       const result = await safeSellHandler(walletWeb3, resolvedAddress, account, dollarAmountNum, slippageNum);
       if (!result.success) {
         toast.error(result.error);
-        setSelling(false);
         return;
       }
 
@@ -537,21 +570,14 @@ const ArtistDetails = () => {
 
       const tokensSold = Number(result.amount) / 1e18;
       await onSellSuccess(tokensSold);
-
-      log("[SELL][TX] Success:", tx?.transactionHash);
     } catch (err) {
       console.error("[SELL] Error:", err);
       let message = "Sell failed";
 
-      if (err.message.includes("Cooldown")) {
-        message = "You must wait 1 hour between sells";
-      } else if (err.message.includes("Daily token cap")) {
-        message = "You can only sell up to 5% of total supply per day";
-      } else if (err.message.includes("Exceeds daily USD limit")) {
-        message = "Daily sell limit of $50,000 reached";
-      } else if (err.message.includes("Not enough ETH")) {
-        message = "Not enough liquidity in curve";
-      }
+      if (err.message.includes("Cooldown")) message = "1-hour cooldown between sells";
+      else if (err.message.includes("Daily token cap")) message = "5% total supply limit per day";
+      else if (err.message.includes("Exceeds daily USD limit")) message = "$50,000 daily sell limit reached";
+      else if (err.message.includes("Not enough ETH")) message = "Not enough liquidity in curve";
 
       toast.error(message);
     } finally {
@@ -738,113 +764,157 @@ const ArtistDetails = () => {
                 </div>
               </div>
               <div className="trade-controls mt-2">
-                {/* Show connect prompt if no account AND MetaMask is detected */}
-                {!account && metaMaskAvailable && (
-                  <Alert variant="info" className="mb-3 text-center">
-                    Connect your wallet to buy/sell shares
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="ms-3"
-                      onClick={async () => {
-                        try {
-                          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-                          setAccount(accounts[0]);
-                        } catch (err) {
-                          toast.error("Connection cancelled");
-                        }
-                      }}
-                    >
-                      Connect Wallet
-                    </Button>
-                  </Alert>
-                )}
-
-                {/* Trading form/buttons only if wallet is connected */}
-                {account ? (
-                  <>
-                    <Form.Group className="mb-2">
-                      <Form.Label htmlFor="dollar-amount">Amount (USD)</Form.Label>
-                      <Form.Control
-                        id="dollar-amount"
-                        type="number"
-                        value={dollarAmount}
-                        onChange={(e) => setDollarAmount(e.target.value)}
-                        placeholder="Enter $ amount"
-                        min="0"
-                        step="0.01"
-                        aria-describedby="share-estimate"
-                        className="form-control"
-                      />
-                      {estimatedShares !== null ? (
-                        <div className="estimated-shares">
-                          ~{estimatedShares.toFixed(2)} shares
-                        </div>
-                      ) : dollarAmount && memoizedArtistDetails.price !== "N/A" ? (
-                        <div className="estimated-shares loading">
-                          Estimating...
-                        </div>
-                      ) : null}
-                    </Form.Group>
-
-                    <Form.Group className="mb-2">
-                      <Form.Label htmlFor="slippage">Slippage Tolerance (%)</Form.Label>
-                      <Form.Control
-                        id="slippage"
-                        type="number"
-                        value={slippage}
-                        onChange={(e) => setSlippage(e.target.value)}
-                        placeholder="Enter slippage %"
-                        min="0"
-                        max="100"
-                        step="0.1"
-                        className="form-control"
-                      />
-                    </Form.Group>
-
-                    <div className="trade-buttons d-flex flex-wrap gap-2">
-                      {/* Keep your existing quick amount buttons here */}
-                      <Button
-                        variant="outline-light"
-                        onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 50) * 1 : 50).toString())}
-                        className="trade-btn"
-                      >
-                        $50
-                      </Button>
-                      {/* ... $100, $500, $1000 buttons ... */}
-
-                      <Button
-                        className="btn-gradient trade-btn"
-                        onClick={handleBuy}
-                        disabled={!readyToTrade || buying || financials.currentPrice === "N/A"}
-                        aria-label="Buy shares"
-                      >
-                        {buying ? <Spinner size="sm" animation="border" /> : "Buy"}
-                      </Button>
-
-                      <Button
-                        variant={cooldownRemaining > 0 ? "secondary" : "danger"}
-                        onClick={handleSell}
-                        disabled={!readyToTrade || selling || cooldownRemaining > 0}
-                        className="trade-btn"
-                        aria-label="Sell shares"
-                      >
-                        {selling ? (
-                          <Spinner size="sm" animation="border" />
-                        ) : cooldownRemaining > 0 ? (
-                          `Sell Cooldown: ${Math.floor(cooldownRemaining / 60)}m ${cooldownRemaining % 60}s`
-                        ) : (
-                          "Sell"
-                        )}
-                      </Button>
+                <Form.Group className="mb-2">
+                  <Form.Label htmlFor="dollar-amount">Amount (USD)</Form.Label>
+                  <Form.Control
+                    id="dollar-amount"
+                    type="number"
+                    value={dollarAmount}
+                    onChange={(e) => setDollarAmount(e.target.value)}
+                    placeholder="Enter $ amount"
+                    min="0"
+                    step="0.01"
+                    aria-describedby="share-estimate"
+                    className="form-control"
+                  />
+                  {estimatedShares !== null ? (
+                    <div className="estimated-shares">
+                      ~{estimatedShares.toFixed(2)} shares
                     </div>
-                  </>
-                ) : (
-                  // Message when not connected (after connect prompt if MetaMask exists)
-                  <div className="text-center text-muted py-3">
-                    Trading disabled in view mode — connect your wallet above to buy/sell
-                  </div>
-                )}
+                  ) : dollarAmount && memoizedArtistDetails.price !== "N/A" ? (
+                    <div className="estimated-shares loading">
+                      Estimating...
+                    </div>
+                  ) : null}
+                </Form.Group>
+
+                <Form.Group className="mb-2">
+                  <Form.Label htmlFor="slippage">Slippage Tolerance (%)</Form.Label>
+                  <Form.Control
+                    id="slippage"
+                    type="number"
+                    value={slippage}
+                    onChange={(e) => setSlippage(e.target.value)}
+                    placeholder="Enter slippage %"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    className="form-control"
+                  />
+                </Form.Group>
+
+                <div className="trade-buttons d-flex flex-wrap gap-2">
+                  {/* Your existing quick amount buttons */}
+                  <Button
+                    variant="outline-light"
+                    onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 50) * 1 : 50).toString())}
+                    className="trade-btn"
+                  >
+                    $50
+                  </Button>
+                  {/* ... $100, $500, $1000 buttons ... */}
+
+                  <Button
+                    className="btn-gradient trade-btn"
+                    onClick={handleBuy}
+                    disabled={!readyToTrade || buying || financials.currentPrice === "N/A"}
+                    aria-label="Buy shares"
+                  >
+                    {buying ? <Spinner size="sm" animation="border" /> : "Buy"}
+                  </Button>
+
+                  <Button
+                    variant={cooldownRemaining > 0 ? "secondary" : "danger"}
+                    onClick={handleSell}
+                    disabled={!readyToTrade || selling || cooldownRemaining > 0}
+                    className="trade-btn"
+                    aria-label="Sell shares"
+                  >
+                    {selling ? (
+                      <Spinner size="sm" animation="border" />
+                    ) : cooldownRemaining > 0 ? (
+                      `Sell Cooldown: ${Math.floor(cooldownRemaining / 60)}m ${cooldownRemaining % 60}s`
+                    ) : (
+                      "Sell"
+                    )}
+                  </Button>
+                </div>
+              </div> <div className="trade-controls mt-2">
+                <Form.Group className="mb-2">
+                  <Form.Label htmlFor="dollar-amount">Amount (USD)</Form.Label>
+                  <Form.Control
+                    id="dollar-amount"
+                    type="number"
+                    value={dollarAmount}
+                    onChange={(e) => setDollarAmount(e.target.value)}
+                    placeholder="Enter $ amount"
+                    min="0"
+                    step="0.01"
+                    aria-describedby="share-estimate"
+                    className="form-control"
+                  />
+                  {estimatedShares !== null ? (
+                    <div className="estimated-shares">
+                      ~{estimatedShares.toFixed(2)} shares
+                    </div>
+                  ) : dollarAmount && memoizedArtistDetails.price !== "N/A" ? (
+                    <div className="estimated-shares loading">
+                      Estimating...
+                    </div>
+                  ) : null}
+                </Form.Group>
+
+                <Form.Group className="mb-2">
+                  <Form.Label htmlFor="slippage">Slippage Tolerance (%)</Form.Label>
+                  <Form.Control
+                    id="slippage"
+                    type="number"
+                    value={slippage}
+                    onChange={(e) => setSlippage(e.target.value)}
+                    placeholder="Enter slippage %"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    className="form-control"
+                  />
+                </Form.Group>
+
+                <div className="trade-buttons d-flex flex-wrap gap-2">
+                  {/* Your existing quick amount buttons */}
+                  <Button
+                    variant="outline-light"
+                    onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 50) * 1 : 50).toString())}
+                    className="trade-btn"
+                  >
+                    $50
+                  </Button>
+                  {/* ... $100, $500, $1000 buttons ... */}
+
+                  <Button
+                    className="btn-gradient trade-btn"
+                    onClick={handleBuy}
+                    disabled={!readyToTrade || buying || financials.currentPrice === "N/A"}
+                    aria-label="Buy shares"
+                  >
+                    {buying ? <Spinner size="sm" animation="border" /> : "Buy"}
+                  </Button>
+
+                  <Button
+                    variant={cooldownRemaining > 0 ? "secondary" : "danger"}
+                    onClick={handleSell}
+                    disabled={!readyToTrade || selling || cooldownRemaining > 0}
+                    className="trade-btn"
+                    aria-label="Sell shares"
+                  >
+                    {selling ? (
+                      <Spinner size="sm" animation="border" />
+                    ) : cooldownRemaining > 0 ? (
+                      `Sell Cooldown: ${Math.floor(cooldownRemaining / 60)}m ${cooldownRemaining % 60}s`
+                    ) : (
+                      "Sell"
+                    )}
+                  </Button>
+                </div>
               </div>
             </Card.Body>
           </Card>
