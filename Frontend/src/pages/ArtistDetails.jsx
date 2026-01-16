@@ -397,11 +397,26 @@ const ArtistDetails = () => {
   }, [contractAddress, artistDetails]);
 
   useEffect(() => {
-    if (!loading && !financialsLoading && !financialsError && artistDetails && resolvedAddress && account && walletWeb3 && httpWeb3) {
-      setReadyToTrade(true);
-    } else {
-      setReadyToTrade(false);
-    }
+    console.log("[readyToTrade DEBUG]", {
+      loading,
+      financialsLoading,
+      financialsError,
+      hasArtistDetails: !!artistDetails,
+      hasResolvedAddress: !!resolvedAddress,
+      hasAccount: !!account,
+      hasWalletWeb3: !!walletWeb3,
+      hasHttpWeb3: !!httpWeb3,
+    });
+
+    const canTrade = (
+      !loading &&
+      !financialsError &&          
+      artistDetails &&
+      resolvedAddress &&
+      walletWeb3 &&
+      httpWeb3
+    );
+    setReadyToTrade(canTrade);
   }, [loading, financialsLoading, financialsError, artistDetails, resolvedAddress, account, walletWeb3, httpWeb3]);
 
   useEffect(() => {
@@ -817,7 +832,7 @@ const ArtistDetails = () => {
                   <Button
                     className="btn-gradient trade-btn"
                     onClick={handleBuy}
-                    disabled={!readyToTrade || buying || financials.currentPrice === "N/A"}
+                    disabled={!readyToTrade || buying || financials.currentPrice === "N/A" || !resolvedAddress}
                     aria-label="Buy shares"
                   >
                     {buying ? <Spinner size="sm" animation="border" /> : "Buy"}
@@ -826,7 +841,7 @@ const ArtistDetails = () => {
                   <Button
                     variant={cooldownRemaining > 0 ? "secondary" : "danger"}
                     onClick={handleSell}
-                    disabled={!readyToTrade || selling || cooldownRemaining > 0}
+                    disabled={!readyToTrade || selling || cooldownRemaining > 0 || !resolvedAddress}
                     className="trade-btn"
                     aria-label="Sell shares"
                   >
