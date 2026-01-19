@@ -72,11 +72,11 @@ const ArtistDetails = () => {
     console.log('[DEBUG WebSocket] Subscribing to /topic/financials/' + artistId);
 
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-    const sockJsUrl = apiUrl.replace('/api', '') + '/ws';  // → https://sounquity.onrender.com/ws
-
+    const wsUrl = (apiUrl.replace('https', 'wss').replace('/api', '') + '/ws').replace('http', 'ws');
     const client = new Client({
-      webSocketFactory: () => new SockJS(sockJsUrl),
+      brokerURL: wsUrl,
       reconnectDelay: 5000,
+      debug: (str) => console.log('[STOMP DEBUG]', str),
     });
 
     client.onConnect = () => {
