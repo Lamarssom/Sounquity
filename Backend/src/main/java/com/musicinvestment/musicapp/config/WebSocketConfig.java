@@ -23,6 +23,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 "http://localhost:3000",
                 "https://sounquity.vercel.app"
             )
-            .withSockJS();
+            // .withSockJS();
     }
 }

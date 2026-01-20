@@ -76,7 +76,6 @@ const ArtistDetails = () => {
     const client = new Client({
       brokerURL: wsUrl,
       reconnectDelay: 5000,
-      debug: (str) => console.log('[STOMP DEBUG]', str),
     });
 
     client.onConnect = () => {
@@ -456,15 +455,6 @@ const ArtistDetails = () => {
 
     if (!account) {
       toast.info("Connect your wallet to buy shares.");
-      // Optional: Auto-prompt connect if MetaMask exists
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-          setAccount(accounts[0]);
-        } catch (err) {
-          toast.error("Wallet connection cancelled.");
-        }
-      }
       return;
     }
 
@@ -533,14 +523,6 @@ const ArtistDetails = () => {
 
     if (!account) {
       toast.info("Connect your wallet to sell shares.");
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-          setAccount(accounts[0]);
-        } catch (err) {
-          toast.error("Connection cancelled.");
-        }
-      }
       return;
     }
 
