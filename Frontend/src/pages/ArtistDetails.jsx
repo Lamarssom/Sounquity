@@ -453,13 +453,8 @@ const ArtistDetails = () => {
       return;
     }
 
-    if (!account) {
-      toast.info("Connect your wallet to buy shares.");
-      return;
-    }
-
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress) {
-      toast.error("Trading not ready yet. Try again in a moment.");
+    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account) {
+      toast.error("Trading not ready. Connect wallet or Try again");
       return;
     }
 
@@ -515,19 +510,13 @@ const ArtistDetails = () => {
   const handleSell = async () => {
     if (selling) return;
 
-    // NEW: Same early toast checks as buy
     if (!metaMaskAvailable) {
       toast.error("MetaMask not detected. Install one to trade.");
       return;
     }
 
-    if (!account) {
-      toast.info("Connect your wallet to sell shares.");
-      return;
-    }
-
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress) {
-      toast.error("Trading not ready. Try again.");
+    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account) {
+      toast.error("Trading not ready. Connect wallet or Try again.");
       return;
     }
 
