@@ -1,3 +1,5 @@
+WebsocketConfig.Java 
+
 package com.musicinvestment.musicapp.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             .setAllowedOrigins(
                 "http://localhost:3000",
                 "https://sounquity.vercel.app"
-            );
-            // .withSockJS();
+            )
+            .withSockJS();
     }
 }
