@@ -1,5 +1,3 @@
-WebsocketConfig.Java 
-
 package com.musicinvestment.musicapp.config;
 
 import org.springframework.context.annotation.Configuration;
