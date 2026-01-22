@@ -76,6 +76,9 @@ const ArtistDetails = () => {
     const client = new Client({
       brokerURL: wsUrl,
       reconnectDelay: 5000,
+      maxReconnectAttempts: 5,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
     });
 
     client.onConnect = () => {
@@ -453,7 +456,7 @@ const ArtistDetails = () => {
       return;
     }
 
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account) {
+    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account  || loading || financialsError || !artistDetails) {
       toast.error("Trading not ready. Connect wallet or Try again");
       return;
     }
@@ -515,7 +518,7 @@ const ArtistDetails = () => {
       return;
     }
 
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account) {
+    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account || loading || financialsError || !artistDetails) {
       toast.error("Trading not ready. Connect wallet or Try again.");
       return;
     }
