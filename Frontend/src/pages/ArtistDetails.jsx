@@ -89,7 +89,7 @@ const ArtistDetails = () => {
           const data = JSON.parse(msg.body);
           queryClient.setQueryData(['financials', artistId], data);
           queryClient.invalidateQueries({ queryKey: ['financials', artistId] });
-        } catch (e) {
+          } catch (e) {
           console.error('Parse error:', e);
         }
       });
@@ -285,22 +285,21 @@ const ArtistDetails = () => {
       if (!window.ethereum) {
         setMetaMaskAvailable(false);
         console.log("[Wallet] No MetaMask detected — view-only mode");
-        // Do NOT block — continue with httpWeb3 only
-        setHttpWeb3(getHttpWeb3()); // Ensure public web3 is always set
+        setHttpWeb3(getHttpWeb3());
         setLoading(false);
         return;
       }
 
       try {
-        // Comment out auto-request to avoid prompt on view-only
-        // const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-
         const injectedWeb3 = getWalletWeb3();
         const readOnlyWeb3 = getHttpWeb3();
 
         setWalletWeb3(injectedWeb3);
         setHttpWeb3(readOnlyWeb3);
-        // setAccount(accounts[0]);  ← only set if connected
+
+        // Fetch current accounts if already connected (no prompt)
+        const accounts = await window.ethereum.request({ method: "eth_accounts" });
+        setAccount(accounts[0] || null);
 
         const handleAccountsChanged = (newAccounts) => {
           if (newAccounts.length > 0) {
@@ -318,7 +317,7 @@ const ArtistDetails = () => {
         return () => {
           window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
         };
-      } catch (err) {
+        } catch (err) {
         console.error("Wallet init failed:", err);
         setMetaMaskAvailable(false);
       } finally {
@@ -412,9 +411,11 @@ const ArtistDetails = () => {
 
     const canTrade = (
       !loading &&
-      !financialsError &&          
+      !financialsLoading &&
+      !financialsError &&
       artistDetails &&
       resolvedAddress &&
+      account &&
       walletWeb3 &&
       httpWeb3
     );
@@ -450,14 +451,13 @@ const ArtistDetails = () => {
   const handleBuy = async () => {
     if (buying) return;
 
-    // NEW: Early checks with toast (no wallet/account)
     if (!metaMaskAvailable) {
       toast.error("MetaMask (or compatible wallet) not detected. Install one to trade.");
       return;
     }
 
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account  || loading || financialsError || !artistDetails) {
-      toast.error("Trading not ready. Connect wallet or Try again");
+    if (!readyToTrade || loading || financialsError || !artistDetails) {
+      toast.error("Trading not ready. Try again");
       return;
     }
 
@@ -518,8 +518,8 @@ const ArtistDetails = () => {
       return;
     }
 
-    if (!readyToTrade || !walletWeb3 || !resolvedAddress || !account || loading || financialsError || !artistDetails) {
-      toast.error("Trading not ready. Connect wallet or Try again.");
+    if (!readyToTrade || loading || financialsError || !artistDetails) {
+      toast.error("Trading not ready. Try again.");
       return;
     }
 
@@ -571,6 +571,16 @@ const ArtistDetails = () => {
       toast.error(message);
     } finally {
       setSelling(false);
+    }
+  };
+
+  const connectWallet = async () => {
+    if (!window.ethereum) return;
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      // The accountsChanged listener will handle setting account
+    } catch (err) {
+      toast.error("Wallet connection failed");
     }
   };
 
@@ -739,7 +749,7 @@ const ArtistDetails = () => {
                         <p className="mb-1">Popularity: {spotifyData?.popularity ?? "N/A"}</p>
                       </OverlayTrigger>
                     </Col>
-                  </Row>
+                    </Row>
                   {artistDetails.spotifyUrl && (
                     <a
                       href={artistDetails.spotifyUrl}
@@ -753,81 +763,115 @@ const ArtistDetails = () => {
                 </div>
               </div>
               <div className="trade-controls mt-2">
-                <Form.Group className="mb-2">
-                  <Form.Label htmlFor="dollar-amount">Amount (USD)</Form.Label>
-                  <Form.Control
-                    id="dollar-amount"
-                    type="number"
-                    value={dollarAmount}
-                    onChange={(e) => setDollarAmount(e.target.value)}
-                    placeholder="Enter $ amount"
-                    min="0"
-                    step="0.01"
-                    aria-describedby="share-estimate"
-                    className="form-control"
-                  />
-                  {estimatedShares !== null ? (
-                    <div className="estimated-shares">
-                      ~{estimatedShares.toFixed(2)} shares
+                {!metaMaskAvailable ? (
+                  <Alert variant="warning">
+                    MetaMask (or compatible wallet) not detected. Install one to trade.
+                  </Alert>
+                ) : !account ? (
+                  <Button
+                    className="btn-gradient trade-btn w-100"
+                    onClick={connectWallet}
+                  >
+                    Connect Wallet to Trade
+                  </Button>
+                ) : (
+                  <>
+                    <Form.Group className="mb-2">
+                      <Form.Label htmlFor="dollar-amount">Amount (USD)</Form.Label>
+                      <Form.Control
+                        id="dollar-amount"
+                        type="number"
+                        value={dollarAmount}
+                        onChange={(e) => setDollarAmount(e.target.value)}
+                        placeholder="Enter $ amount"
+                        min="0"
+                        step="0.01"
+                        aria-describedby="share-estimate"
+                        className="form-control"
+                      />
+                      {estimatedShares !== null ? (
+                        <div className="estimated-shares">
+                          ~{estimatedShares.toFixed(2)} shares
+                        </div>
+                      ) : dollarAmount && memoizedArtistDetails.price !== "N/A" ? (
+                        <div className="estimated-shares loading">
+                          Estimating...
+                        </div>
+                      ) : null}
+                    </Form.Group>
+
+                    <Form.Group className="mb-2">
+                      <Form.Label htmlFor="slippage">Slippage Tolerance (%)</Form.Label>
+                      <Form.Control
+                        id="slippage"
+                        type="number"
+                        value={slippage}
+                        onChange={(e) => setSlippage(e.target.value)}
+                        placeholder="Enter slippage %"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        className="form-control"
+                      />
+                    </Form.Group>
+
+                    <div className="trade-buttons d-flex flex-wrap gap-2">
+                      <Button
+                        variant="outline-light"
+                        onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 50) * 1 : 50).toString())}
+                        className="trade-btn"
+                      >
+                        $50
+                      </Button>
+                      <Button
+                        variant="outline-light"
+                        onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 100) * 1 : 100).toString())}
+                        className="trade-btn"
+                      >
+                        $100
+                      </Button>
+                      <Button
+                        variant="outline-light"
+                        onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 500) * 1 : 500).toString())}
+                        className="trade-btn"
+                      >
+                        $500
+                      </Button>
+                      <Button
+                        variant="outline-light"
+                        onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 1000) * 1 : 1000).toString())}
+                        className="trade-btn"
+                      >
+                        $1000
+                      </Button>
+
+                      <Button
+                        className="btn-gradient trade-btn"
+                        onClick={handleBuy}
+                        disabled={!readyToTrade || buying || financials.currentPrice === "N/A" || !resolvedAddress}
+                        aria-label="Buy shares"
+                      >
+                        {buying ? <Spinner size="sm" animation="border" /> : "Buy"}
+                      </Button>
+
+                      <Button
+                        variant={cooldownRemaining > 0 ? "secondary" : "danger"}
+                        onClick={handleSell}
+                        disabled={!readyToTrade || selling || cooldownRemaining > 0 || !resolvedAddress}
+                        className="trade-btn"
+                        aria-label="Sell shares"
+                      >
+                        {selling ? (
+                          <Spinner size="sm" animation="border" />
+                        ) : cooldownRemaining > 0 ? (
+                          `Sell Cooldown: ${Math.floor(cooldownRemaining / 60)}m ${cooldownRemaining % 60}s`
+                        ) : (
+                          "Sell"
+                        )}
+                      </Button>
                     </div>
-                  ) : dollarAmount && memoizedArtistDetails.price !== "N/A" ? (
-                    <div className="estimated-shares loading">
-                      Estimating...
-                    </div>
-                  ) : null}
-                </Form.Group>
-
-                <Form.Group className="mb-2">
-                  <Form.Label htmlFor="slippage">Slippage Tolerance (%)</Form.Label>
-                  <Form.Control
-                    id="slippage"
-                    type="number"
-                    value={slippage}
-                    onChange={(e) => setSlippage(e.target.value)}
-                    placeholder="Enter slippage %"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    className="form-control"
-                  />
-                </Form.Group>
-
-                <div className="trade-buttons d-flex flex-wrap gap-2">
-                  {/* Your existing quick amount buttons */}
-                  <Button
-                    variant="outline-light"
-                    onClick={() => setDollarAmount((prev) => (prev ? (parseFloat(prev) + 50) * 1 : 50).toString())}
-                    className="trade-btn"
-                  >
-                    $50
-                  </Button>
-                  {/* ... $100, $500, $1000 buttons ... */}
-
-                  <Button
-                    className="btn-gradient trade-btn"
-                    onClick={handleBuy}
-                    disabled={!readyToTrade || buying || financials.currentPrice === "N/A" || !resolvedAddress}
-                    aria-label="Buy shares"
-                  >
-                    {buying ? <Spinner size="sm" animation="border" /> : "Buy"}
-                  </Button>
-
-                  <Button
-                    variant={cooldownRemaining > 0 ? "secondary" : "danger"}
-                    onClick={handleSell}
-                    disabled={!readyToTrade || selling || cooldownRemaining > 0 || !resolvedAddress}
-                    className="trade-btn"
-                    aria-label="Sell shares"
-                  >
-                    {selling ? (
-                      <Spinner size="sm" animation="border" />
-                    ) : cooldownRemaining > 0 ? (
-                      `Sell Cooldown: ${Math.floor(cooldownRemaining / 60)}m ${cooldownRemaining % 60}s`
-                    ) : (
-                      "Sell"
-                    )}
-                  </Button>
-                </div>
+                  </>
+                )}
               </div> 
             </Card.Body>
           </Card>
