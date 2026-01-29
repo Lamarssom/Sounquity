@@ -69,36 +69,60 @@ const ArtistDetails = () => {
       return;
     }
 
-    console.log('[DEBUG WebSocket] Subscribing to /topic/financials/' + artistId);
+    console.log('[DEBUG WebSocket] Initializing client for artistId:', artistId);
 
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-    const wsUrl = (apiUrl.replace('https', 'wss').replace('/api', '') + '/ws').replace('http', 'ws');
+      let wsUrl = apiUrl
+      .replace(/^https?/, apiUrl.startsWith('https') ? 'wss' : 'ws')
+      .replace(/\/api\/?$/, '');
+    if (!wsUrl.endsWith('/ws')) {
+      wsUrl = wsUrl.replace(/\/$/, '') + '/ws';
+    }
+    console.log('[DEBUG WebSocket] Connecting to:', wsUrl);
+
     const client = new Client({
       brokerURL: wsUrl,
       reconnectDelay: 5000,
-      maxReconnectAttempts: 5,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
+      maxReconnectAttempts: 10,         
+      heartbeatIncoming: 10000,         
+      heartbeatOutgoing: 10000,
+      webSocketFactory: () => {
+        console.log('[DEBUG WebSocket] Creating native WebSocket');
+        return new WebSocket(wsUrl);
+      },
+      debug: (str) => console.log('[STOMP DEBUG]', str),
     });
 
     client.onConnect = () => {
-      console.log('[DEBUG WebSocket] Connected! Subscribing...');
+      console.log('[DEBUG WebSocket] STOMP Connected! Subscribing...');
       client.subscribe(`/topic/financials/${artistId}`, (msg) => {
         console.log('[DEBUG WebSocket] MESSAGE RECEIVED:', msg.body);
         try {
           const data = JSON.parse(msg.body);
           queryClient.setQueryData(['financials', artistId], data);
           queryClient.invalidateQueries({ queryKey: ['financials', artistId] });
-          } catch (e) {
-          console.error('Parse error:', e);
+        } catch (e) {
+          console.error('[DEBUG WebSocket] Parse error:', e);
         }
       });
+    };
+
+    client.onStompError = (frame) => {
+      console.error('[STOMP ERROR] Broker reported error:', frame.headers.message, frame.body);
+    };
+
+    client.onWebSocketError = (error) => {
+      console.error('[WS ERROR] WebSocket error:', error);
+    };
+
+    client.onWebSocketClose = (event) => {
+      console.log('[WS CLOSED] Code:', event.code, 'Reason:', event.reason || '(no reason provided)', 'Was clean?', event.wasClean);
     };
 
     client.activate();
 
     return () => {
-      console.log('[DEBUG WebSocket] Deactivating for', artistId);
+      console.log('[DEBUG WebSocket] Cleaning up for artistId:', artistId);
       client.deactivate();
     };
   }, [artistId, queryClient]);
